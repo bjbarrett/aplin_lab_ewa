@@ -25,4 +25,8 @@ plot(d_BA$subject_index ~ d_BA$rel_time , col=col_pal[d_BA$choose_blue +1] , pch
 #scans every 10 minutes, social window if they were in most recent scan
 #or first time they showed up at feeder since last scan
 ps_BA <- read.csv("cockatoo data/presence_solve_BA.csv")
-
+nrow(ps_BA)
+nrow(d_BA)
+#just use social information associated with 1 in ps_BA
+d_BA$n_obs_blue <- 0
+d_BA$n_obs_red <- 0
