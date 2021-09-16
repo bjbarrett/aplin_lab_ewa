@@ -1,0 +1,23 @@
+EWA_raw_data
+
+DATE: date of session, format YYYYMMDD
+SESSION: number of session within day (1 or 2)
+SUBJECT: unique individual ID
+COLOUR: color of almond bird solved on (1-RED or 1-BLUE)
+REL.TIME: relative time of solve in comparison to start of experiment on this particular day (starting times: NB:7h, CG: 10h30, BA: 13h)
+NBR.IND: number of individual in 1m radius of the puzzle box
+DROPS: wheteher individual opened (op) or droped (drops) the almond 
+BEHAV: observed behaviour, first letter indicating colour of almond (R or B), the 2nd and 3rd letter whether individual opened (op) or dropped(dr)the almond
+BEHAV1 & BEHAV2: behaviour decomposed, with BEHAV1 indicating colour (R or B) and BEHAV 2 whether an individual opened (op) or dropped(dr) the almond
+GROUP: location of the experiment, corresponding to the three roosts (BA, CG, NB)
+ 
+ 
+ILV
+ID: unique individual ID
+AGE : age of individual, can be adult (A) or juvenile (J)
+SEX: sex of indivudal, male(M) or female(F)
+RANK: dominance rank of individual as measured at the site indicated in file name 
+
+
+PRESENCE_SOLVE
+presence matrix for each solve, whether individuals where present (TRUE) or not (FALSE) at a solve 

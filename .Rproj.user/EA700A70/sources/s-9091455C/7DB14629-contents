@@ -1,0 +1,61 @@
+---
+title: 'Review: Afsetf et al: Vertical transmission of...sticklebacks'
+author: "Anonymous"
+date: "9/14/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview and Recommendation
+
+I thought this was an interesting experiment and paper. 
+However I had some concerns about methods, analysis, phrasing/terminology, and clarity of mechanisms.
+Also, I would like to see reproducible R code for the models in addition to the data to reproduce results and do a thorough job as a reviewer.
+I recommend a resubmission with reproducible code for analysis and adressing of some of the revisions below:
+
+# Terminology
+Vertical and Horizontal Transmission have a history of use in the genetic, cultural evolution, epigenetic, maternal effects, and transgenerational plasticity literature. 
+Genes are overwhelmingy vertically transimtted (with some less common horizontal transmission, i.e. plasmids in bacteria and overlooked eukaryote examples).
+Social information can be transmittied vertically from parent to offspring or horizontally from a non-parent demonstrator to an observer (technically same age group, but we will ignore overlapping generations an oblique transmission). 
+Parental effects, as I understand, are non-geneticly transmitted influeces parents have on their offspring. Hence, they are always vertically transmitted. T These paental effects are typically epigenetic, hormone induced, or *could* be socially learned. 
+The last point had me confused and disagreeing with many of your statements, until I realized when you were discussing horizontal transmission you were almost always intending "*horizontal cultural transmission*" or "*horizontal transmission of social information*." I would stick to one of these terms, including in the title and abstract, to make this clear. 
+This whole paper might be better reframed as the interplay between multiple extragenetic inheritance systems like horizontal transmission of social information and horizontal parental effects affecting offspring phenotypes (which would make your claim in lines 26-27 of the abstract more accurate). This is related to  ( whole Extended Evolutionary Synthesis paradigm hyped by Laland and others.
+When discussing *vertical transmission*, I think you were almost always referring to a parental effect for which the mechanism was not fully known. I think clarifying more specifically what you mean by vertical transmission would be useful. 
+
+Perhaps a title like: "Horizontally transmitted social information to stickleback fathers affect offspring phenotypes via parental effects" would be clearer. 
+The current title had me confused, but it might be due to my background as a social learning researcher.
+
+# Clarity of Mechanisms
+I think my confusion of what you meant by vertical and horizontal transmission, might have been due to the fact that this study does not clearly elucidate the mechanisms through which information and phenotypes are transmitted. The integration of horizontal and vertical cultural transmission is well studied in the social learnig and cultural evolution literature. 
+The integration of social information and parental effects is less well studies (but see Jablonka and Lamb  book "Evolution in 4 dimensions" and Eva Jablonlas recent work for early ideas and [Farine et al 2015](https://doi.org/10.1016/j.cub.2015.06.071)  for an example of parental effects influencing social learning.
+This is the interesting aspect of the paper to me which makes it relevant to a general biology audience (like Biology Letters aims for). There is already a burgeoning field of cultural epigenetics and this particularly in humans (i.e. cultural factors influece methylation, microbiome, parental effects via stress hormones). 
+But, observing a relatively simple case like this in a fish is particular interesting.
+My one wish for this study is that the mechanisms of horizontal cultural transmission (i.e. olfaction or observation of observed behavioral cues) and the mechanisms behind vertical transmissed parental effects (sperm mediation) were more clearly known. This ws mentioned in section 181-188, but I think that this is unknown should have been aluded to earlier in the paper or even the abstract. The authors do provide some good hypotheses, but identifying these mechanisms would make this more appicable to a general audience. I do acknowledge that aidentifying the mechanisms is a study unto its own.  That being said, this is a good standalone paper worthy of publication somewhere after revisions, but this is a weakness that limits its interest to a broader audience.
+
+
+
+
+
+
+When talking about 
+I found myself at many points confused as to what mechanisms were being responsible for transmission along pathways.
+My understanding of this paper is that
+# Summary of Paper
+
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
