@@ -1,7 +1,9 @@
 library(rstan)
 library(rethinking)
+options(mc.cores=4) 
 
-#assuming previosu clearning code is run
+#assuming previous cleaning code is run
+d <- read.csv("cockatoo_Data/BA_Almonds_cockatoo_60s.csv")
 str(d)
 str(d_BA)
 d <- d_BA
@@ -18,7 +20,7 @@ for (r in 1:nrow(d)) {
   }
 }
 
-d$tech_index <- as.integer(d$behav1)
+d$tech_index <- as.integer(as.factor(d$behav1))
 #individual learning models
 datalist_i <- list(
   N = nrow(d),                                  #length of dataset
@@ -33,15 +35,15 @@ datalist_i <- list(
 
 parlist <- c("mu", "I", "sigma_i" ,"Rho_i", "log_lik" ,"PrPreds","phi" , "lambda" )
 
-fit_i = stan( file = 'cockatoo data/stan_code/ewa_ind.stan', 
+fit_i = stan( file = 'cockatoo_data/stan_code/ewa_ind.stan', 
               data = datalist_i ,
-              iter = 2000, 
-              warmup=1000, 
-              chains=2, 
-              cores=2, 
+              iter = 1000, 
+              warmup=500, 
+              chains=4, 
+              cores=4, 
               control=list(adapt_delta=0.9) , 
               pars=parlist, 
-              refresh=10)
+              refresh=50)
 
 precis(fit_i, depth=2)
 precis(fit_i, depth=3 , pars='I')
