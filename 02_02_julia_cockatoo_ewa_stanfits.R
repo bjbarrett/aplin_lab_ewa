@@ -144,3 +144,18 @@ str(post)
 x<- apply(post$PrPreds[,,1] , 2 , mean)
 str(x)
 points(x[1:100], nrow(x[1:100]) , cex=.5)
+
+######fit_freq_2
+
+fit_freq_2 = stan( file = 'cockatoo_data/stan_code/ewa_freq.stan', 
+                 data = datalist_s ,
+                 iter = 1000, 
+                 warmup=500, 
+                 chains=4, 
+                 cores=4, 
+                 control=list(adapt_delta=0.99) , 
+                 pars=c("sigma_i","Rho_i","log_lik","PrPreds","phi","lambda","gamma","fc","phi_i","lambda_i","gamma_i","fc_i" ), 
+                 refresh=100,
+                 init=0,
+                 seed=as.integer(108)
+)

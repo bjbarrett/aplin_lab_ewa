@@ -1,0 +1,35 @@
+---
+title: "EA Parrors"
+author: "Julia Penndorf & Brendan Barrett & Lucy Aplin"
+date: "9/20/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Goals for Analysis
+
+### Fit these EWA models to the parrot data.
+1. Individual Learning
+2. Frequency Dependence
+3. rank bias (copy birds with higher elo scores)
+4. male-sex bias (since I strongly believe there is a bias towards males)
+5. age bias (given that eating novel food is potentially risky, I expect a bias towards adults)
+6. kin bias (might have some difficulty with missing data)
+7. same roost bias ()
+
+### Include these Individual Level Variables
+The individual level variables I would like to include are :
+- sex (F, M, NA)
+- age (J, A, NA)
+- location (experiment run at 3 locations)
+
+### other thoughts/concerns
+The number of individuals in close proximity (I had a half circle of 1m radius in front of the box, and for each solve, counted how many individuals are within that halfcircle. The idea behind is that hte busier the half circle, the less "precise" a choice would be, i.e. they might just grab and run without caring to much for colour). 
+
+The the accessibility of both colours. They tended to make a mess with the dispenser, so I coded whether one colour was more accessible (R<B, R=B, R>B, NA) with R<B : blue more accessible than R, R=B: both accessible; R>B: red more accessible, NA in the cases of issues with camera or individuals in front)
+
+
+

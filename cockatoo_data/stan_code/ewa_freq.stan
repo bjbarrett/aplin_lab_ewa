@@ -85,54 +85,62 @@ generated quantities{
     real logPrA;        // individual learning temp
     real PrS;        // social learning temp
     vector[K] s_temp;        
-    real lambda[J];           // stickiness parameter
-    real phi[J];           // stickiness parameter
-    real gamma[J];         // social weight
-    real fc[J];     // conform exponent
+    real lambda_i[J];           // stickiness parameter
+    real phi_i[J];           // stickiness parameter
+    real gamma_i[J];         // social weight
+    real fc_i[J];     // conform exponent
+    real lambda;           // stickiness parameter
+    real phi;           // stickiness parameter
+    real gamma;         // social weight
+    real fc;     // conform exponent
     matrix[N_effects,N_effects] Rho_i;
     matrix[N,K] PrPreds;     
 
     Rho_i = L_Rho_i * L_Rho_i';
+    lambda = exp(mu[1]);
+    phi = inv_logit(mu[2]);
+    gamma = inv_logit(mu[3]);
+    fc = exp(mu[4]);
     
     for ( i in 1:N ) {
         //update attractions
         for ( j in 1:K ) {
             if ( bout[i] > 1 ) {
-                AC[j] = (1-phi[id[i]])*AC[j] + phi[id[i]]*pay_i[i-1,j];
+                AC[j] = (1-phi_i[id[i]])*AC[j] + phi_i[id[i]]*pay_i[i-1,j];
             } else {
                 AC[j] = 0;
             }
         }//j
 
         if ( bout[i]==1 ) {
-            lambda[id[i]] = exp( mu[1] + I[id[i],1] ) ;
-            phi[id[i]]= inv_logit(  mu[2] + I[id[i],2] );
-            gamma[id[i]] = inv_logit(mu[3] + I[id[i],3]  );
-            fc[id[i]] = exp(mu[4] + I[id[i],4]);
+            lambda_i[id[i]] = exp( mu[1] + I[id[i],1] ) ;
+            phi_i[id[i]]= inv_logit(  mu[2] + I[id[i],2] );
+            gamma_i[id[i]] = inv_logit(mu[3] + I[id[i],3]  );
+            fc_i[id[i]] = exp(mu[4] + I[id[i],4]);
         }
 
-        logPrA = lambda[id[i]]*AC[tech[i]] - log_sum_exp( lambda[id[i]]*AC );
+        logPrA = lambda_i[id[i]]*AC[tech[i]] - log_sum_exp( lambda_i[id[i]]*AC );
 
         //conformity aspect below
         if ( bout[i] > 1 ) {
             if (sum( s[i] ) > 0 ) { //only socially learn when there is social information
                 // compute frequency cue
-                for ( j in 1:K ) s_temp[j] = pow(s[i,j],fc[id[i]]);
+                for ( j in 1:K ) s_temp[j] = pow(s[i,j],fc_i[id[i]]);
                 PrS = s_temp[tech[i]]/sum(s_temp);
-                log_lik[i] =  log( (1-gamma[id[i]])*exp(logPrA) + gamma[id[i]]*PrS )  ; 
+                log_lik[i] =  log( (1-gamma_i[id[i]])*exp(logPrA) + gamma_i[id[i]]*PrS )  ; 
                 for(j in 1:K){
-                PrPreds[i,j] = (1-gamma[id[i]])*exp( lambda[id[i]]*AC[j] - log_sum_exp( lambda[id[i]]*AC) ) + gamma[id[i]]*(s_temp[j]/sum(s_temp)) ;
+                PrPreds[i,j] = (1-gamma_i[id[i]])*exp( lambda_i[id[i]]*AC[j] - log_sum_exp( lambda_i[id[i]]*AC) ) + gamma_i[id[i]]*(s_temp[j]/sum(s_temp)) ;
                 }
             } else {
                  log_lik[i] = (logPrA);
                  for(j in 1:K){
-                    PrPreds[i,j] = exp( lambda[id[i]]*AC[j] - log_sum_exp( lambda[id[i]]*AC) );
+                    PrPreds[i,j] = exp( lambda_i[id[i]]*AC[j] - log_sum_exp( lambda_i[id[i]]*AC) );
                  }
             }
         } else {
                  log_lik[i] = (logPrA);
                  for(j in 1:K){
-                    PrPreds[i,j] = exp( lambda[id[i]]*AC[j] - log_sum_exp( lambda[id[i]]*AC) );
+                    PrPreds[i,j] = exp( lambda_i[id[i]]*AC[j] - log_sum_exp( lambda_i[id[i]]*AC) );
                 }
             }
      }//i  
