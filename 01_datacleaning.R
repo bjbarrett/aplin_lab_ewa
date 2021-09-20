@@ -113,10 +113,10 @@ for (i in 1:nrow(d_BA2)) {
 }
 for (i in 1:nrow(d_BA2)) {
   if (d_BA2$age_index[i]=="J"){
-    d_BA2$age_index[i] <- 2
+    d_BA2$age_index[i] <- 0
   }
   if (d_BA2$age_index[i]=="A"){
-    d_BA2$age_index[i] <- 3
+    d_BA2$age_index[i] <- 1
   }
 }
 
@@ -187,27 +187,28 @@ for (i in 1:nrow(ILV)) {
   }
 }
 
-higher_rank <- matrix(NA,nrow=nrow(d_BA2),ncol=ncol(rank_matrix))
+rank_higher <- matrix(NA,nrow=nrow(d_BA2),ncol=ncol(rank_matrix))
 
-for(i in 1:nrow(d_BA2)) {
-  for (j in 1:ncol(higher_rank)) {
-    higher_rank[i,j] <- rank_matrix[1,j]>d_BA2$rank_index[i] #whether solving individual is higher ranked (1 highest rank)
+for (i in 1:nrow(rank_higher)) {
+  for (j in 1:ncol(rank_higher)){
+    rank_higher[i,j] <- rank_matrix[1,j]>d_BA2$rank_index[i]
   }
 }
-higher_rank[is.na(higher_rank)] <- FALSE #replacing NAs introduced by unknown ranks
-# binary matrix: TRUE= observer is higher ranked than attending individual
-# FALSE: attending individual higher ranked than individual
+rank_higher[is.na(rank_higher)] <-0
+#binary matrix: 1: solving individual i is higher in rank than attending individual j
+# 0 : attending individual j is higher in rank than solving individual i // or one rank is unknown
 
-for( i in 1:nrow(d_BA2)){ # creates 2 matrices, specifying if individual was present at red (freq_red) or blue (freq_blue) solve
+for( i in 1:nrow(d_BA2) ){ # creates 2 matrices, specifying if individual was present at red (freq_red) or blue (freq_blue) solve
   for (j in 1:ncol(ps_BA)){
     if (d_BA2$subject[i] == colnames(ps_BA)[j]){     
-      freq_highrank_red[i,j] <- d_BA2$choose_red[i]*higher_rank[i,j]*ps_BA[i,j]
-      freq_highrank_blue[i,j] <- d_BA2$choose_blue[i]*ps_BA[i,j]*higher_rank[i,j]
+      freq_highrank_red[i,j] <- as.numeric(d_BA2$choose_red[i])*as.numeric(ps_BA[i,j])*as.numeric(rank_higher[i,j])
+      freq_highrank_blue[i,j] <- as.numeric(d_BA2$choose_blue[i])*as.numeric(ps_BA[i,j])*as.numeric(rank_higher[i,j])
     }	
   }
-}
+} # does not work 
 
-
+#### solves of individuals from same roost witnessed
+### count number of solves red / blue done by individuals of same roost within window
 #### solves of individuals from same roost witnessed
 ### count number of solves red / blue done by individuals of same roost within window
 freq_roost_red <- matrix(0,nrow=nrow(d_BA2),ncol=ncol(ps_BA)) ##sum values where we tally up ones
@@ -254,8 +255,9 @@ for (nobs in 1:nrow(d_BA2)){
   
   d_BA2$s_roost_red[nobs] <- sum( freq_roost_red[ zz : (d_BA2$obs_index[nobs] - 1) , d_BA2$ID_all_index[nobs] ] )
   d_BA2$s_roost_blue[nobs] <- sum( freq_roost_blue[ zz : (d_BA2$obs_index[nobs] - 1) , d_BA2$ID_all_index[nobs] ]) 
-
+  
 }
+
 
 write.csv(d_BA2,'C:/Users/jpenndorf/ownCloud/EWA/aplin_lab_ewa/cockatoo_data/BA_Almonds_cockatoo_60s.csv')
 
