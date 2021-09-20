@@ -8,6 +8,58 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+## Methods
+
+### Locations and training
+3 groups (BA, CG, NB) - 2 experimental groups (BA, CG) and one control group
+In each experimental group, 1 mated pair was trained at the nesthollow to eat either blue (BA) or red (CG) almonds. 
+In BA, the female did not eat almonds (shelled or unshelled), so one additionnal male was trained.
+Demonstrators in BA: MTV_V_BA (adult male) & BPO_V_BA (adult male)
+Demonstrators in CG: X11 (adult male) & BNV_H_CG (adult female)
+
+One the demonstrators were comfortable taking coloured almonds --> preference trial, where both options where exposed for the first time (until then, they only had blue OR red almonds). The non-prefered colour was soaked in apple vinegar. Each bird had 7 choices. All three males had 100% preference for the trained colour, the female had 6 almonds in the preferred colour, and one of the other colour.
+
+
+
+### Experiment
+1 experiment /group/day, starting at the control group (NB), then CG, then BA
+10 days of experiment
+
+individuals moved freely between groups, some individuals where seen at all three sites during the experiment, and solving started in the control group on day 4
+
+The amount of almonds presented at each group depended on the mean number of birds present during the observational phase (3 weeks prior).
+Each session lasted maximum two hours.
+If one colour was depleted during the first hour, a second session was started at the start of the second hour to increase the opportunity for social learning. This was implemented only on day 3 (double-check exact date)
+The experiment ended either after 2h, or once the second batch of almonds was depleted, depending on what happened first.
+All experiments were filmed, & voice recorded at the same time 
+
+
+2 potential explanations for "loss of colour preference" in BA: 
+- red-preference
+- frequency dependent ? (the solves just before the first bird learned where on red, and at this point, all solvers solved on red)
+
+Given that 1 demonstrator in BA switched to 50% preference during the first day, and the second also quickly lost its trained preference for blue, after the experiment, we went to 2 other groups (MA, BG). Individuals frequently move between BA,CG, NB and these to roosts. We therefore did not train any demonstrators, but rather used these moving individuals as demonstrators.
+
+In these two additional groups, the birds were presented only with blue almonds, until they had eaten 1kg of almonds ( ~2 sessions in each group). 
+Once they had eaten 1kg of blue (to seed an initial preference), both options were presented till we reached day 10.
+In these two additional groups we have 
+- limited information on age-sex class (I tried to collect as much as possible, but had less time to do so - meaning that the proportion of aged & sexed birds is less than in the other groups)
+- only limited number of DNA-sexed individuals (~20 at each site)
+- no social data (rank)
+
+
+### Recording
+Video recordings analyzed in BORIS
+
+for each solve: 
+- ID of solver
+- COULOUR of the chosen almond
+- NUMBER OF INDIVIDUALS in the 1m radius
+- STATE OF THE BOX - they tended to make a mess, this variable is meant to record whether 1 colour was easier to access than the other (values : R<B, R=B,R>B, NA)
+- DROP: if bird dropped the almond (later restricted to dropping within 3s, since we estimated that we would see a bird in the frame on average ~3 seconds after the solve)
+
+
+
 
 ## Goals for Analysis
 
