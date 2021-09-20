@@ -3,7 +3,7 @@ library(rethinking)
 options(mc.cores=4) 
 
 #assuming previous cleaning code is run, which we need to add to github
-d <- read.csv("cockatoo_Data/BA_Almonds_cockatoo_60s.csv")
+d <- read.csv("cockatoo_data/BA_Almonds_cockatoo_60s.csv")
 str(d)
 d <- d[with(d, order(subject_index,date, rel_time)), ]
 
@@ -55,7 +55,7 @@ fit_i = stan( file = 'cockatoo_data/stan_code/ewa_ind.stan',
               cores=4, 
               control=list(adapt_delta=0.9) , 
               pars=c("mu", "I", "sigma_i" ,"Rho_i", "log_lik" ,"PrPreds","phi" , "lambda" ), 
-              refresh=50,
+              refresh=100,
               seed=as.integer(20210917)
               )
 
@@ -78,16 +78,17 @@ traceplot(fit_i , pars='phi')
 
 fit_freq = stan( file = 'cockatoo_data/stan_code/ewa_freq.stan', 
               data = datalist_s ,
-              iter = 1400, 
-              warmup=800, 
+              iter = 1200, 
+              warmup=600, 
               chains=4, 
               cores=4, 
               control=list(adapt_delta=0.99) , 
               pars=c("mu","I","sigma_i","Rho_i","log_lik","PrPreds","phi","lambda","gamma","fc" ), 
-              refresh=50,
+              refresh=100,
               init=0,
               seed=as.integer(108)
               )
+
 
 traceplot(fit_freq , pars='mu') #params on link fcn scale
 traceplot(fit_freq , pars='sigma_i')

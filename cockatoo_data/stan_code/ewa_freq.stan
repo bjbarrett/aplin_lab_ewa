@@ -36,7 +36,7 @@ model {
     mu[1] ~ normal(1,0.6);
     mu[2] ~ normal(0,1);
     mu[3] ~ normal(0,1);
-    mu[4] ~ exponential(1);
+    mu[4] ~ normal(0,0.6);
     sigma_i ~ exponential(1);
     to_vector(zed_i) ~ normal(0,1);
     L_Rho_i ~ lkj_corr_cholesky(3);

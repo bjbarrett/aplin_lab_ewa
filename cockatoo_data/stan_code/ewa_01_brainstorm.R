@@ -40,3 +40,16 @@ plot(dsim$Pr1~dsim$timestep , col=col.pal[1] , pch=19 , xlab="timestep" , ylab="
 points(dsim$Pr2~dsim$timestep,col=col.pal[2],pch=19 )
 points(rep(1.05,timesteps) ~ dsim$timestep,col=col.pal[dsim$tech],pch=ifelse(dsim$succeed==1 , 1 , 19 ), cex=0.7 )
 abline(h=1)
+
+ac_0 <- c(.2,.2)
+L <- 2
+Softmax(L*ac_0)
+phi_sim <- .15
+obs_payoffs_sim <- c(0,0)
+for(i in 1:2){
+  ac_1[i] <- (1-phi_sim)*ac_0[i] + phi_sim*(obs_payoffs_sim[i])
+}
+#ac_1 <- (1-phi_sim)*ac_0 + phi_sim*(obs_payoffs_sim)
+ac_1
+Softmax(L*ac_1)
+ 
