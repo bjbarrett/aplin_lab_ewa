@@ -3,8 +3,8 @@ library(rethinking)
 options(mc.cores=4) 
 
 #assuming previous cleaning code is run, which we need to add to github
-#d <- read.csv("cockatoo_data/BA_Almonds_cockatoo_60s.csv")
-d <- read.csv("~/Documents/aplin_lab_ewa/BA_Almonds_cockatoo_120s.csv")
+# d <- read.csv("cockatoo_data/BA_Almonds_cockatoo_60s.csv")
+# d <- read.csv("~/Documents/aplin_lab_ewa/BA_Almonds_cockatoo_120s.csv")
 
 str(d)
 d <- d[with(d, order(subject_index,date, rel_time)), ]
@@ -109,6 +109,7 @@ fit_freq = stan( file = 'cockatoo_data/stan_code/ewa_freq.stan',
                  seed=as.integer(108)
 )
 
+####male-bias
 fit_male= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan', 
                  data = datalist_s_male ,
                  iter = 1000, 
@@ -122,6 +123,7 @@ fit_male= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan',
                  seed=as.integer(222)
 )
 
+###adult-bias
 fit_adult= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan', 
                 data = datalist_s_adult ,
                 iter = 1000, 

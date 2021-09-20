@@ -29,7 +29,11 @@ traceplot(fit_freq , pars='phi')
 traceplot(fit_freq , pars='gamma')
 traceplot(fit_freq , pars='fc')
 
-##male-bias
+apply(post_freq$fc_i , 2, median)
+PCI(post_freq$fc , prob=.55)
+length(which(post_freq$fc>1))/length(post_freq$fc>1)#prob mass suggesting conformist transmission
+
+## male
 post_male <- extract(fit_male)
 str(post_male)
 precis(fit_male)
@@ -46,3 +50,24 @@ traceplot(fit_male , pars='lambda')
 traceplot(fit_male , pars='phi')
 traceplot(fit_male , pars='gamma')
 traceplot(fit_male , pars='betaq')
+
+##adult-bias
+post_adult <- extract(fit_adult)
+str(post_adult)
+precis(fit_adult)
+precis(fit_adult , pars='lambda_i' , depth=2)
+precis(fit_adult , pars='phi_i' , depth=2)
+precis(fit_adult , pars='gamma_i' , depth=2)
+precis(fit_adult , pars='betaq_i' , depth=2)
+DensLambda(post_adult)
+DensPhi(post_adult)
+DensGamma(post_adult)
+DensBetaq(post_adult)
+traceplot(fit_adult , pars='sigma_i')
+traceplot(fit_adult , pars='lambda')
+traceplot(fit_adult , pars='phi')
+traceplot(fit_adult , pars='gamma')
+traceplot(fit_adult , pars='betaq')
+
+###model comparison
+compare(fit_i , fit_freq, fit_male , fit_adult)
