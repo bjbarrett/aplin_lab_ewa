@@ -62,33 +62,37 @@ generated quantities{
     vector[N] log_lik;
     vector[K] AC;       // attraction scores
     real logPrA;        // individual learning temp
-    vector[J] lambda;           // stickiness parameter
-    vector[J] phi;           // stickiness parameter
+    vector[J] lambda_i;           // stickiness parameter
+    vector[J] phi_i;           // stickiness parameter
+    real lambda;
+    real phi;
     matrix[N_effects,N_effects] Rho_i;
     matrix[N,K] PrPreds;     
 
     Rho_i = L_Rho_i * L_Rho_i';
+    lambda = exp(mu[1]);
+    phi = inv_logit(mu[2]);
     
     for ( i in 1:N ) {
         //update attractions
         for ( j in 1:K ) {
             if ( bout[i] > 1 ) {
-                AC[j] = (1-phi[id[i]])*AC[j] + phi[id[i]]*pay_i[i-1,j];
+                AC[j] = (1-phi_i[id[i]])*AC[j] + phi_i[id[i]]*pay_i[i-1,j];
             } else {
                 AC[j] = 0;
             }
         }//j
 
         if ( bout[i]==1 ) {
-            lambda[id[i]] = exp( mu[1] + I[id[i],1] ) ;
-            phi[id[i]] = inv_logit(  mu[2] + I[id[i],2] );
+            lambda_i[id[i]] = exp( mu[1] + I[id[i],1] ) ;
+            phi_i[id[i]] = inv_logit(  mu[2] + I[id[i],2] );
         }
 
-        logPrA = lambda[id[i]]*AC[tech[i]] - log_sum_exp( lambda[id[i]]*AC );
+        logPrA = lambda_i[id[i]]*AC[tech[i]] - log_sum_exp( lambda_i[id[i]]*AC );
 
          log_lik[i] = (logPrA);
          for(j in 1:K){
-            PrPreds[i,j] = exp( lambda[id[i]]*AC[j] - log_sum_exp( lambda[id[i]]*AC) );
+            PrPreds[i,j] = exp( lambda_i[id[i]]*AC[j] - log_sum_exp( lambda_i[id[i]]*AC) );
         }
      }//i  
 }//end of model
