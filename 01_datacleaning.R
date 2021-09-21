@@ -176,36 +176,54 @@ freq_highrank_blue <- matrix(0,nrow=nrow(d_BA2),ncol=ncol(ps_BA))
 
 d_BA2$rank_index <- ILV$rank[match(d_BA2$subject,ILV$id)]
 
-rank_matrix <- matrix(NA,nrow=1,ncol=ncol(ps_BA))
-colnames(rank_matrix)<- colnames(ps_BA)
+
+d_BA2$roost <- ILV$roost[match(d_BA2$subject,ILV$id)]
+
+rank.matrix <- matrix(NA,nrow=1,ncol=ncol(ps_BA))
+colnames(rank.matrix)<- colnames(ps_BA)
 
 for (i in 1:nrow(ILV)) {
-  for (j in 1:ncol(rank_matrix)) {
-    if (ILV$id[i]==colnames(rank_matrix)[j]) {
-      rank_matrix[1,j] <- ILV$rank[i]
+  for (j in 1:ncol(rank.matrix)) {
+    if (ILV$id[i]==colnames(rank.matrix)[j]) {
+      rank.matrix[1,j] <- ILV$rank[i]
     }
   }
 }
+rank.matrix[is.na(rank.matrix)] <- 0
+rank_similarity <- matrix(0,nrow=nrow(d_BA2),ncol=ncol(rank.matrix))
 
-rank_higher <- matrix(NA,nrow=nrow(d_BA2),ncol=ncol(rank_matrix))
-
-for (i in 1:nrow(rank_higher)) {
-  for (j in 1:ncol(rank_higher)){
-    rank_higher[i,j] <- rank_matrix[1,j]>d_BA2$rank_index[i]
+for(i in 1:nrow(d_BA2)) {
+  for (j in 1:ncol(rank.matrix)) {
+    rank_similarity[i,j] <- rank.matrix[1,j]>d_BA2$rank_index[i] 
   }
 }
-rank_higher[is.na(rank_higher)] <-0
-#binary matrix: 1: solving individual i is higher in rank than attending individual j
-# 0 : attending individual j is higher in rank than solving individual i // or one rank is unknown
+
+rank_similarity[is.na(rank_similarity)] <- 0 #NAs due to individuals of unknown roosting location
+## roost similarity: binary, whether observing individual is from same roost than solver
+## does not take into account whether they are solving at their roost, or just visiting this particular roost for a day
+
+
 
 for( i in 1:nrow(d_BA2) ){ # creates 2 matrices, specifying if individual was present at red (freq_red) or blue (freq_blue) solve
   for (j in 1:ncol(ps_BA)){
-    if (d_BA2$subject[i] == colnames(ps_BA)[j]){     
-      freq_highrank_red[i,j] <- as.numeric(d_BA2$choose_red[i])*as.numeric(ps_BA[i,j])*as.numeric(rank_higher[i,j])
-      freq_highrank_blue[i,j] <- as.numeric(d_BA2$choose_blue[i])*as.numeric(ps_BA[i,j])*as.numeric(rank_higher[i,j])
+    if ((d_BA2$subject[i] == colnames(ps_BA)[j] )& (rank_similarity[1,j]==1))    {     
+      freq_highrank_red[i,j] <- as.numeric(d_BA2$choose_red[i])*as.numeric(ps_BA[i,j])
+      freq_highrank_blue[i,j] <- as.numeric(d_BA2$choose_blue[i])*as.numeric(ps_BA[i,j])
+    }	
+    else { freq_highrank_red[i,j] <- 0
+      freq_highrank_blue[i,j] <- 0
     }	
   }
-} # does not work 
+}
+
+for (nobs in 1:nrow(d_BA2)){
+  zz <- min(d_BA2$obs_index[as.numeric(as.duration(d_BA2$rel_time[nobs] - d_BA2$rel_time)) <= win_width ]) #what is minimal value or earliest observation of males that occured within the window width
+  
+  d_BA2$s_highrank_red[nobs] <- sum( freq_highrank_red[ zz : (d_BA2$obs_index[nobs] - 1) , d_BA2$ID_all_index[nobs] ] )
+  d_BA2$s_highrank_blue[nobs] <- sum( freq_highrank_blue[ zz : (d_BA2$obs_index[nobs] - 1) , d_BA2$ID_all_index[nobs] ]) 
+  
+}
+
 
 #### solves of individuals from same roost witnessed
 ### count number of solves red / blue done by individuals of same roost within window
