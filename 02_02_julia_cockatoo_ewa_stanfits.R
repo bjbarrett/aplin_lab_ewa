@@ -3,7 +3,7 @@ library(rethinking)
 options(mc.cores=4) 
 
 #assuming previous cleaning code is run, which we need to add to github
-# d <- read.csv("cockatoo_data/BA_Almonds_cockatoo_60s.csv")
+d <- read.csv("cockatoo_data/BA_Almonds_cockatoo_60s.csv")
 # d <- read.csv("~/Documents/aplin_lab_ewa/BA_Almonds_cockatoo_120s.csv")
 
 str(d)
@@ -61,6 +61,8 @@ datalist_s_male <- list(
   N_effects=4                                                                        #number of parameters to estimates
 )
 
+
+
 #scale cues by dividing by max value
 datalist_s_male$q <- datalist_s_male$q / max(datalist_s_male$q)
 
@@ -78,6 +80,36 @@ datalist_s_adult <- list(
   N_effects=4                                                                        #number of parameters to estimates
 )
 datalist_s_adult$q <- datalist_s_adult$q / max(datalist_s_adult$q)
+
+###roost bias
+datalist_s_roost <- list(
+  N = nrow(d),                            #length of dataset
+  J = length( unique(d$subject_index) ),       #number of individuals
+  K = 2,         #number of processing techniques
+  tech = d$tech_index,           #technique index
+  pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
+  s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J
+  q = cbind(d$s_roost_blue,d$s_roost_red), 
+  bout = d$bout,
+  id = d$subject_index ,                                           #individual ID
+  N_effects=4                                                                        #number of parameters to estimates
+)
+datalist_s_roost$q <- datalist_s_roost$q / max(datalist_s_roost$q)
+
+###rank bias
+datalist_s_rank <- list(
+  N = nrow(d),                            #length of dataset
+  J = length( unique(d$subject_index) ),       #number of individuals
+  K = 2,         #number of processing techniques
+  tech = d$tech_index,           #technique index
+  pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
+  s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J
+  q = cbind(d$s_highrank_blue,d$s_highrank_red), 
+  bout = d$bout,
+  id = d$subject_index ,                                           #individual ID
+  N_effects=4                                                                        #number of parameters to estimates
+)
+datalist_s_rank$q <- datalist_s_rank$q / max(datalist_s_rank$q)
 
 
 #########model fits
@@ -98,8 +130,8 @@ fit_i = stan( file = 'cockatoo_data/stan_code/ewa_ind.stan',
 
 fit_freq = stan( file = 'cockatoo_data/stan_code/ewa_freq.stan', 
                  data = datalist_s ,
-                 iter = 1000, 
-                 warmup=500, 
+                 iter = 1200, 
+                 warmup=600, 
                  chains=4, 
                  cores=4, 
                  control=list(adapt_delta=0.99) , 
@@ -112,8 +144,8 @@ fit_freq = stan( file = 'cockatoo_data/stan_code/ewa_freq.stan',
 ####male-bias
 fit_male= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan', 
                  data = datalist_s_male ,
-                 iter = 1000, 
-                 warmup=500, 
+                 iter = 1200, 
+                 warmup=600, 
                  chains=4, 
                  cores=4, 
                  control=list(adapt_delta=0.99) , 
@@ -126,8 +158,8 @@ fit_male= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan',
 ###adult-bias
 fit_adult= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan', 
                 data = datalist_s_adult ,
-                iter = 1000, 
-                warmup=500, 
+                iter = 1200, 
+                warmup=600, 
                 chains=4, 
                 cores=4, 
                 control=list(adapt_delta=0.99) , 
@@ -137,3 +169,30 @@ fit_adult= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan',
                 seed=as.integer(543)
 )
 
+### roost bias
+fit_roost= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan', 
+                 data = datalist_s_roost ,
+                 iter = 1200, 
+                 warmup=600, 
+                 chains=4, 
+                 cores=4, 
+                 control=list(adapt_delta=0.99) , 
+                 pars=c("phi","lambda","gamma","betaq","phi_i","lambda_i","gamma_i","betaq_i","sigma_i","Rho_i","log_lik","PrPreds"), 
+                 refresh=100,
+                 init=0,
+                 seed=as.integer(1649)
+)
+
+### rank bias
+fit_rank= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan', 
+                 data = datalist_s_rank ,
+                 iter = 1200, 
+                 warmup=600, 
+                 chains=4, 
+                 cores=4, 
+                 control=list(adapt_delta=0.99) , 
+                 pars=c("phi","lambda","gamma","betaq","phi_i","lambda_i","gamma_i","betaq_i","sigma_i","Rho_i","log_lik","PrPreds"), 
+                 refresh=100,
+                 init=0,
+                 seed=as.integer(5209)
+)
