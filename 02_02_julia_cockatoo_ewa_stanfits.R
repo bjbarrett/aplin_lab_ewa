@@ -127,8 +127,7 @@ fit_i = stan( file = 'cockatoo_data/stan_code/ewa_ind.stan',
               )
 
 ####frequency dependent learning model
-
-fit_freq = stan( file = 'cockatoo_data/stan_code/ewa_freq.stan', 
+fit_freq = stan( file = 'cockatoo_data/stan_code/ewa_freq_slu.stan', 
                  data = datalist_s ,
                  iter = 1200, 
                  warmup=600, 
@@ -142,7 +141,7 @@ fit_freq = stan( file = 'cockatoo_data/stan_code/ewa_freq.stan',
 )
 
 ####male-bias
-fit_male= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan', 
+fit_male= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu.stan', 
                  data = datalist_s_male ,
                  iter = 1200, 
                  warmup=600, 
@@ -156,7 +155,7 @@ fit_male= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan',
 )
 
 ###adult-bias
-fit_adult= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan', 
+fit_adult= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu.stan', 
                 data = datalist_s_adult ,
                 iter = 1200, 
                 warmup=600, 
@@ -170,7 +169,7 @@ fit_adult= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan',
 )
 
 ### roost bias
-fit_roost= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan', 
+fit_roost= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu.stan', 
                  data = datalist_s_roost ,
                  iter = 1200, 
                  warmup=600, 
@@ -184,7 +183,7 @@ fit_roost= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan',
 )
 
 ### rank bias
-fit_rank= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan', 
+fit_rank= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu.stan', 
                  data = datalist_s_rank ,
                  iter = 1200, 
                  warmup=600, 
@@ -195,4 +194,18 @@ fit_rank= stan( file = 'cockatoo_data/stan_code/ewa_cue.stan',
                  refresh=100,
                  init=0,
                  seed=as.integer(5209)
+)
+
+
+###experimental IL
+fit_i_exp = stan( file = 'cockatoo_data/stan_code/ewa_ind_trialcost.stan', 
+              data = datalist_i ,
+              iter = 1200, 
+              warmup=600, 
+              chains=4, 
+              cores=4, 
+              control=list(adapt_delta=0.9) , 
+              pars=c("phi" , "lambda" , "lo_c" , "phi_i" , "lambda_i" , "sigma_i" ,"Rho_i", "log_lik" ,"PrPreds"  ), 
+              refresh=100,
+              seed=as.integer(207)
 )

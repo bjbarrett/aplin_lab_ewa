@@ -1,11 +1,11 @@
 ##individual learning 
 
-post_i <- extract(fit_i)
+post_i <- extract(fit_i_exp)
 
 precis(fit_i)
 precis(fit_i , pars='lambda_i' , depth=2)
 precis(fit_i , pars='phi_i' , depth=2)
-
+plot(precis(fit_i , pars='phi_i' , depth=2))
 DensLambda(post_i)
 DensPhi(post_i)
 
@@ -14,7 +14,7 @@ traceplot(fit_i , pars='lambda')
 traceplot(fit_i , pars='phi')
 
 ##freq dep
-post_freq <- extract(fit_freq)
+post_freq <- extract(fit_freq_slu)
 str(post_freq)
 
 precis(fit_freq)
@@ -22,6 +22,8 @@ precis(fit_freq , pars='lambda_i' , depth=2)
 precis(fit_freq , pars='phi_i' , depth=2)
 precis(fit_freq , pars='gamma_i' , depth=2)
 precis(fit_freq , pars='fc_i' , depth=2)
+precis(fit_freq , pars='sigma_i' , depth=2)
+precis(fit_freq_slu , pars='sigma_i' , depth=2)
 
 DensLambda(post_freq)
 DensPhi(post_freq)
