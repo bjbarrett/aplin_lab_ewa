@@ -60,21 +60,17 @@ model {
         logPrA = lambda*AC[tech[i]] - log_sum_exp( lambda*AC );
         
         //social learning below
-        //if ( bout[i] > 1 ) {
-            if (sum( s[i] ) > 0 ) { // only socially learn if there is social info
+        if (sum( s[i] ) > 0 ) { // only socially learn if there is social info
                 for ( j in 2:K ) {
                     lin_mod[j] = exp( betaq*q[i,j]);                 // compute non-frequency cue as log-linear model
                 }
-                lin_mod[1] = 1; // aliased outcome
-                PrS = lin_mod[tech[i]]/sum(lin_mod);
-                target += ( log( (1-gamma)*exp(logPrA) + gamma*PrS ) );
+        lin_mod[1] = 1; // aliased outcome
+        PrS = lin_mod[tech[i]]/sum(lin_mod);
+        target += ( log( (1-gamma)*exp(logPrA) + gamma*PrS ) );
             } else {
                 target += ( logPrA );
             }
-        //} else {
-            //target += ( logPrA );
-         //}
-     }//i  
+    }//i  
 
 }//end of model
 
@@ -122,9 +118,7 @@ generated quantities{
         logPrA = lambda_i[id[i]]*AC[tech[i]] - log_sum_exp( lambda_i[id[i]]*AC );
 
         //only socially learn if there is social info
-        if ( bout[i] > 1 ) {
-            // if (sum( s[i] ) > 0 ) {
-
+             if (sum( s[i] ) > 0 ) {
                 // compute non-frequency cues as log-linear model
                 for ( j in 2:K ) {
                     lin_mod[j] = exp( betaq_i[id[i]]*q[i,j]);
@@ -132,11 +126,10 @@ generated quantities{
                 lin_mod[1] = 1; // aliased outcome
                 // compute frequency cue
                 PrS = lin_mod[tech[i]]/sum(lin_mod);
-
                 log_lik[i] =  log( (1-gamma_i[id[i]])*exp(logPrA) + gamma_i[id[i]]*PrS )  ; 
-                
+                //pr gq
                 for(j in 1:K){
-                PrPreds[i,j] = (1-gamma_i[id[i]])*exp( lambda_i[id[i]]*AC[j] - log_sum_exp( lambda_i[id[i]]*AC) ) + gamma_i[id[i]]*(lin_mod[j]/sum(lin_mod)) ;
+                    PrPreds[i,j] = (1-gamma_i[id[i]])*exp( lambda_i[id[i]]*AC[j] - log_sum_exp( lambda_i[id[i]]*AC) ) + gamma_i[id[i]]*(lin_mod[j]/sum(lin_mod)) ;
                 }
                 
             } else {
@@ -146,13 +139,6 @@ generated quantities{
                     PrPreds[i,j] = exp( lambda_i[id[i]]*AC[j] - log_sum_exp( lambda_i[id[i]]*AC) );
                  }
             }
-        // } else {
-          //       log_lik[i] = (logPrA);
-                 
-          //       for(j in 1:K){
-            //        PrPreds[i,j] = exp( lambda_i[id[i]]*AC[j] - log_sum_exp( lambda_i[id[i]]*AC) );
-           //     }
-        //    }
      }//i  
 
 }//end of model

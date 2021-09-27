@@ -4,8 +4,6 @@ options(mc.cores=4)
 
 #assuming previous cleaning code is run, which we need to add to github
 d <- read.csv("cockatoo_data/BA_Almonds_cockatoo_60s.csv")
-# d <- read.csv("~/Documents/aplin_lab_ewa/BA_Almonds_cockatoo_120s.csv")
-
 str(d)
 d <- d[with(d, order(subject_index,date, rel_time)), ]
 
@@ -196,16 +194,49 @@ fit_rank= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu.stan',
                  seed=as.integer(5209)
 )
 
-
-###experimental IL
-fit_i_exp = stan( file = 'cockatoo_data/stan_code/ewa_ind_trialcost.stan', 
-              data = datalist_i ,
-              iter = 1200, 
-              warmup=600, 
-              chains=4, 
-              cores=4, 
-              control=list(adapt_delta=0.9) , 
-              pars=c("phi" , "lambda" , "lo_c" , "phi_i" , "lambda_i" , "sigma_i" ,"Rho_i", "log_lik" ,"PrPreds"  ), 
-              refresh=100,
-              seed=as.integer(207)
-)
+saveRDS(fit_i, "fit_i_60s_slu.rds")
+saveRDS(fit_freq, "fit_freq_60s_slu.rds")
+saveRDS(fit_male, "fit_male_60s_slu.rds")
+saveRDS(fit_adult, "fit_adult_60s_slu.rds")
+saveRDS(fit_roost, "fit_roost_60s_slu.rds")
+saveRDS(fit_rank, "fit_rank_60s_slu.rds")
+# 
+# ###experimental IL
+# # fit_i_exp = stan( file = 'cockatoo_data/stan_code/ewa_ind_trialcost.stan', 
+# #               data = datalist_i ,
+# #               iter = 1200, 
+# #               warmup=600, 
+# #               chains=4, 
+# #               cores=4, 
+# #               control=list(adapt_delta=0.9) , 
+# #               pars=c("phi" , "lambda" , "lo_c" , "phi_i" , "lambda_i" , "sigma_i" ,"Rho_i", "log_lik" ,"PrPreds"  ), 
+# #               refresh=100,
+# #               seed=as.integer(207)
+# # )
+# 
+# 
+# datalist_s2 <- list(
+#   N = nrow(d),                            #length of dataset
+#   J = length( unique(d$subject_index) ),       #number of individuals
+#   K = 2,         #number of processing techniques
+#   tech = d$tech_index,           #technique index
+#   pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
+#   s = cbind(d$n_obs_blue + .01,d$n_obs_red + .01), #observed counts of all K techniques to individual J (frequency-dependence)
+#   bout = d$bout,
+#   id = d$subject_index ,                                           #individual ID
+#   N_effects=4                                                                        #number of parameters to estimates
+# )
+# 
+# 
+# fit_f= stan( file = 'cockatoo_data/stan_code/freq.stan', 
+#                 data = datalist_s2 ,
+#                 iter = 1200, 
+#                 warmup=600, 
+#                 chains=4, 
+#                 cores=4, 
+#                 control=list(adapt_delta=0.99) , 
+#                 pars=c("I","sigma_i","mu"), 
+#                 refresh=100,
+#                 init=0,
+#                 seed=as.integer(5209)
+# )

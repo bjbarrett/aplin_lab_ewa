@@ -1,13 +1,9 @@
 library(RColorBrewer)
 #individual raw data:
 #calculate mean pr at each timestep
-#d$mean_choose_blue_ind <- apply(post_i$PrPreds[,,1] , 2 , mean)
 d$mean_choose_red_ind <- apply(post_i$PrPreds[,,2] , 2 , mean)
-#d$mean_choose_blue_freq <- apply(post_freq$PrPreds[,,1] , 2 , mean)
 d$mean_choose_red_freq <- apply(post_freq$PrPreds[,,2] , 2 , mean)
-#d$mean_choose_blue_male <- apply(post_male$PrPreds[,,1] , 2 , mean)
 d$mean_choose_red_male <- apply(post_male$PrPreds[,,2] , 2 , mean)
-#d$mean_choose_blue_adult <- apply(post_adult$PrPreds[,,1] , 2 , mean)
 d$mean_choose_red_adult <- apply(post_adult$PrPreds[,,2] , 2 , mean)
 d$mean_choose_red_roost <- apply(post_roost$PrPreds[,,2] , 2 , mean)
 d$mean_choose_red_rank <- apply(post_rank$PrPreds[,,2] , 2 , mean)
@@ -17,7 +13,7 @@ d$mean_choose_red_rank <- apply(post_rank$PrPreds[,,2] , 2 , mean)
 colz <- c( "blue" , "red")
 pchez <- c(1,19)
 col_strat <- brewer.pal( 6 ,"YlOrRd" )
-pdf("individual_preds_choosered_multimodel.pdf")
+pdf("individual_preds_choosered_multimodel_60s_slu.pdf")
 
 par(mfrow = c(4, 2))
 par(cex = 0.7)
