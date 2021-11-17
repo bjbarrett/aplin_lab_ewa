@@ -43,6 +43,7 @@ datalist_i <- list(
   N_effects=2                               #number of parameters to estimates
 )
 
+#freq dep
 datalist_s <- list(
   N = nrow(d),                            #length of dataset
   J = length( unique(d$subject_index) ),       #number of individuals
@@ -118,6 +119,23 @@ datalist_s_rank <- list(
   N_effects=4                                                                        #number of parameters to estimates
 )
 datalist_s_rank$q <- datalist_s_rank$q / max(datalist_s_rank$q)
+
+
+##freq dep and rank
+datalist_s_rankfreq <- list(
+  N = nrow(d),                            #length of dataset
+  J = length( unique(d$subject_index) ),       #number of individuals
+  K = 2,         #number of processing techniques
+  tech = d$tech_index,           #technique index
+  pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
+  q = cbind(d$s_highrank_blue,d$s_highrank_red), 
+  s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J (frequency-dependence)
+  bout = d$bout,
+  id = d$subject_index ,                                           #individual ID
+  N_effects=5                                                                        #number of parameters to estimates
+)
+
+datalist_s_rankfreq$q <- datalist_s_rankfreq$q / max(datalist_s_rankfreq$q)
 
 
 #########model fits
