@@ -1,9 +1,15 @@
 library(rstan)
 library(rethinking)
+library(cmdstanr)
 options(mc.cores=4) 
-
+library('janitor')
+library('beepr')
 #assuming previous cleaning code is run, which we need to add to github
-d <- read.csv("cockatoo_data/BA_Almonds_cockatoo_60s.csv")
+#d <- read.csv("cockatoo_data/BA_Almonds_cockatoo_60s.csv")
+d <- read.csv("cockatoo_data/ALL_ROOSTS_Almonds_cockatoo_60s.csv")
+d$subject_index <- as.integer(as.factor(d$subject) )
+d <- clean_names(d)
+
 str(d)
 d <- d[with(d, order(subject_index,date, rel_time)), ]
 
@@ -17,9 +23,13 @@ for (r in 1:nrow(d)) {
     }
   }
 }
-
+beep(2)
 d$tech_index <- as.integer(as.factor(d$behav1))
-##### create datalists
+unique(d$subject_index)
+unique(d$subject[])
+which(d$subject)
+counts<-data.frame(table(d$subject_index))
+counts
 
 ### individual learning models
 datalist_i <- list(
@@ -135,7 +145,7 @@ fit_freq = stan( file = 'cockatoo_data/stan_code/ewa_freq_slu.stan',
                  pars=c("phi","lambda","gamma","fc","phi_i","lambda_i","gamma_i","fc_i","sigma_i","Rho_i","log_lik","PrPreds"), 
                  refresh=100,
                  init=0,
-                 seed=as.integer(108)
+                 seed=as.integer(5498)
 )
 
 ####male-bias
@@ -194,12 +204,12 @@ fit_rank= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu.stan',
                  seed=as.integer(5209)
 )
 
-saveRDS(fit_i, "fit_i_60s_slu.rds")
-saveRDS(fit_freq, "fit_freq_60s_slu.rds")
-saveRDS(fit_male, "fit_male_60s_slu.rds")
-saveRDS(fit_adult, "fit_adult_60s_slu.rds")
-saveRDS(fit_roost, "fit_roost_60s_slu.rds")
-saveRDS(fit_rank, "fit_rank_60s_slu.rds")
+saveRDS(fit_i, "fit_i_60s_slu_all.rds")
+saveRDS(fit_freq, "fit_freq_60s_slu_all.rds")
+saveRDS(fit_male, "fit_male_60s_slu_all.rds")
+saveRDS(fit_adult, "fit_adult_60s_slu_all.rds")
+saveRDS(fit_roost, "fit_roost_60s_slu_all.rds")
+saveRDS(fit_rank, "fit_rank_60s_slu_all.rds")
 # 
 # ###experimental IL
 # # fit_i_exp = stan( file = 'cockatoo_data/stan_code/ewa_ind_trialcost.stan', 
