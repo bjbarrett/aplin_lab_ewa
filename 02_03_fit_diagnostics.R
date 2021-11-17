@@ -1,13 +1,13 @@
 ##individual learning 
 
-post_i <- extract(fit_i)
+post_ind <- extract(fit_i)
 
 precis(fit_i)
 precis(fit_i , pars='lambda_i' , depth=2)
 precis(fit_i , pars='phi_i' , depth=2)
 plot(precis(fit_i , pars='phi_i' , depth=2))
-DensLambda(post_i)
-DensPhi(post_i)
+DensLambda(post_ind)
+DensPhi(post_ind)
 
 traceplot(fit_i , pars='sigma_i')
 traceplot(fit_i , pars='lambda')
@@ -36,12 +36,10 @@ traceplot(fit_freq , pars='gamma')
 traceplot(fit_freq , pars='fc')
 
 apply(post_freq$fc_i , 2, median)
-PCI(post_freq$fc , prob=.55)
-length(which(post_freq$fc>1))/length(post_freq$fc>1) #prob mass suggesting conformist transmission
 
 ## male
 post_male <- extract(fit_male)
-str(post_male)
+#str(post_male)
 
 precis(fit_male , pars=c('lambda' , 'phi' , 'gamma' , 'betaq'))
 precis(fit_male , pars='lambda_i' , depth=2)
@@ -105,7 +103,6 @@ traceplot(fit_roost , pars='betaq')
 
 ##rank-bias
 post_rank <- extract(fit_rank)
-str(post_rank)
 
 precis(fit_rank , pars=c('lambda' , 'phi' , 'gamma' , 'betaq'))
 precis(fit_rank , pars='lambda_i' , depth=2)
