@@ -42,3 +42,5 @@ vignettes/*.pdf
 # Other files
 .pdf
 .rds
+
+/*.Rproj.user/
