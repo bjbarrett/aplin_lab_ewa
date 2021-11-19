@@ -21,7 +21,7 @@ Social learning could occur on the first timestep, and $A_{t,k}=0$.
 Now lets load files of model fits. I will run these longer on the final iteration.
 ```{r load rds and script , echo=FALSE}
 source("02_01_plot_fcns.R")
-fit_i <- readRDS("/Users/bbarrett/Downloads/fit_i_60s_slu_all.rds")
+fit_ind <- readRDS("/Users/bbarrett/Downloads/fit_i_60s_slu_all.rds")
 fit_freq <- readRDS("/Users/bbarrett/Downloads/fit_freq_60s_slu_all.rds")
 fit_adult <- readRDS("/Users/bbarrett/Downloads/fit_adult_60s_slu_all.rds")
 fit_male <-  readRDS("/Users/bbarrett/Downloads/fit_male_60s_slu_all.rds")
@@ -54,17 +54,16 @@ d$tech_index <- as.integer(as.factor(d$behav1))
 First we can look at WAIC scores, although these should not be treated religiously.
 They can give us an overall understanding of variation in the models in predicting the data while penalizing overfitting.But there are caveats with information criteria and time series models.
 ```{r info criteria , eval=FALSE}
-ic_tab <- compare(fit_i , fit_freq, fit_male , fit_adult , fit_roost , fit_rank , fit_adult_freq , fit_rank_freq , fit_male_freq)
-ic_tab
+ compare(fit_ind , fit_freq, fit_male , fit_adult , fit_roost , fit_rank , fit_adult_freq , fit_rank_freq , fit_male_freq)
 ```
-Overall we see the most support for the frequency dependent model with with a weight of `r `ic_tab$weight[1]$` and WAIC=`r `ic_tab$WAIC[1]$`.
+<!-- Overall we see the most support for the frequency dependent model with with a weight of `r ic_tab$weight[1]` and WAIC=`r ic_tab$WAIC[1]`. -->Overall we see the most support for the frequency dependent model with with a weight of 1.
 We see comparable support for roost, rank and male models, with less support for adult. No strong evidence for pure social learning.
 
 The combo models did not get great support, so I am ignoring them in the meantime. We could plot model predictions but there seems to be plenty to do.
 # Frequency Dependent Learning
 ```{r fdep , eval=TRUE}
 precis(fit_freq , pars=c('lambda' , 'phi' , 'fc' , 'sigma_i') , depth=2)
-precis(fit_i , pars=c('Rho_i') , depth=3)
+precis(fit_ind , pars=c('Rho_i') , depth=3)
 plot(precis(fit_freq , pars=c( 'fc_i' ) , depth=2)
 )
 post_freq <- extract(fit_freq)
@@ -180,9 +179,9 @@ DensBetaq(post_adult)
 ```
 # Individual Learning
 ```{r il , eval=TRUE}
-precis(fit_i , pars=c('lambda' , 'phi' , 'sigma_i') , depth=2)
-precis(fit_i , pars=c('Rho_i') , depth=3)
-post_ind <- extract(fit_i)
+precis(fit_ind , pars=c('lambda' , 'phi' , 'sigma_i') , depth=2)
+precis(fit_ind , pars=c('Rho_i') , depth=3)
+post_ind <- extract(fit_ind)
 DensLambda(post_ind)
 DensPhi(post_ind)
 ```
