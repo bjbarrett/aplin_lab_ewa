@@ -295,15 +295,15 @@ fit_male_freq= stan( file = 'cockatoo_data/stan_code/ewa_freq_and_cue_slu.stan',
                       seed=as.integer(2723)
 )
 
-saveRDS(fit_i, "fit_i_60s_slu_all.rds")
-saveRDS(fit_freq, "fit_freq_60s_slu_all.rds")
-saveRDS(fit_male, "fit_male_60s_slu_all.rds")
-saveRDS(fit_adult, "fit_adult_60s_slu_all.rds")
-saveRDS(fit_roost, "fit_roost_60s_slu_all.rds")
-saveRDS(fit_rank, "fit_rank_60s_slu_all.rds")
-saveRDS(fit_rank_freq, "fit_rank_freq_60s_slu_all.rds")
-saveRDS(fit_adult_freq, "fit_adult_freq_60s_slu_all.rds")
-saveRDS(fit_male_freq, "fit_male_freq_60s_slu_all.rds")
+saveRDS(fit_i, "fit_i_30s_slu_all.rds")
+saveRDS(fit_freq, "fit_freq_30s_slu_all.rds")
+saveRDS(fit_male, "fit_male_30s_slu_all.rds")
+saveRDS(fit_adult, "fit_adult_30s_slu_all.rds")
+saveRDS(fit_roost, "fit_roost_30s_slu_all.rds")
+saveRDS(fit_rank, "fit_rank_30s_slu_all.rds")
+saveRDS(fit_rank_freq, "fit_rank_freq_30s_slu_all.rds")
+saveRDS(fit_adult_freq, "fit_adult_freq_30s_slu_all.rds")
+saveRDS(fit_male_freq, "fit_male_freq_30s_slu_all.rds")
 
 # 
 # ###experimental IL
