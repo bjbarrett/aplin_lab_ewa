@@ -55,6 +55,8 @@ datalist_s <- list(
   id = d$subject_index ,                                           #individual ID
   N_effects=4                                                                        #number of parameters to estimates
 )
+#scale cues by dividing by max value
+datalist_s$s <- datalist_s$s / max(datalist_s$s)
 
 ###male bias
 datalist_s_male <- list(
@@ -136,6 +138,7 @@ datalist_s_rankfreq <- list(
 )
 
 datalist_s_rankfreq$q <- datalist_s_rankfreq$q / max(datalist_s_rankfreq$q)
+datalist_s_rankfreq$s <- datalist_s_rankfreq$s / max(datalist_s_rankfreq$s)
 
 ##freq dep and adult
 datalist_s_adultfreq <- list(
@@ -152,6 +155,7 @@ datalist_s_adultfreq <- list(
 )
 
 datalist_s_adultfreq$q <- datalist_s_adultfreq$q / max(datalist_s_adultfreq$q)
+datalist_s_adultfreq$s <- datalist_s_adultfreq$s / max(datalist_s_adultfreq$s)
 
 ##freq dep and male
 datalist_s_malefreq <- list(
@@ -168,6 +172,7 @@ datalist_s_malefreq <- list(
 )
 
 datalist_s_malefreq$q <- datalist_s_malefreq$q / max(datalist_s_malefreq$q)
+datalist_s_malefreq$s <- datalist_s_malefreq$s / max(datalist_s_malefreq$s)
 
 #########model fits
 

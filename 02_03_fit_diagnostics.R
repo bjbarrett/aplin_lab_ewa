@@ -121,5 +121,17 @@ traceplot(fit_rank , pars='phi')
 traceplot(fit_rank , pars='gamma')
 traceplot(fit_rank , pars='betaq')
 
+##git freq_adult
+
+traceplot(fit_adult_freq , pars='sigma_i')
+traceplot(fit_adult_freq , pars='lambda')
+traceplot(fit_adult_freq , pars='phi')
+traceplot(fit_adult_freq , pars='gamma')
+traceplot(fit_adult_freq , pars='fc')
+traceplot(fit_adult_freq , pars='betaq')
+
+
 ###model comparison
 compare(fit_i , fit_freq, fit_male , fit_adult , fit_roost , fit_rank)
+
+
