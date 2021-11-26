@@ -115,6 +115,135 @@ ColorLegend(x=max(dd$rel_time) + 50 ,y=max(dd$subject_group_index),
             cols=colMain , labels=seq(from=0 , to=1 , by=0.1) , cex=0.8)
 
 ```
+## Individual level variables parameter plots
+My hunch is that we will not see clear rank/sex differences, but we can plot estimates of varying effects by these to see if it is worthwhile to fit a model.
+
+```{r rank plots freq}
+id_lvs <- d[,c("subject" , "subject_index" , "sex_index" , "age_index","rank_index" ),]
+id_lvs <- id_lvs[!duplicated(id_lvs), ]
+str(post_freq)
+apply(post_freq$phi_i, 2, mean,)
+#phi
+id_lvs$phi <- apply(post_freq$phi_i, 2, median,)[id_lvs$subject_index]
+plot(phi~rank_index, data=id_lvs)
+abline(mC <- lm(phi ~ rank_index, data = id_lvs))
+
+# dens(id_lvs$phi[is.na(id_lvs$rank_index)==FALSE])
+# dens(id_lvs$phi[is.na(id_lvs$rank_index)==TRUE] , col="red" , add=TRUE)
+##lambda
+id_lvs$lambda <- apply(post_freq$lambda_i, 2, median,)[id_lvs$subject_index]
+plot(lambda~rank_index, data=id_lvs)
+abline(mC <- lm(lambda ~ rank_index, data = id_lvs))
+
+#gamma
+id_lvs$gamma <- apply(post_freq$gamma_i, 2, median,)[id_lvs$subject_index]
+plot(gamma~rank_index, data=id_lvs)
+abline(mC <- lm(gamma ~ rank_index, data = id_lvs))
+
+# dens(id_lvs$gamma[is.na(id_lvs$rank_index)==FALSE])
+# dens(id_lvs$gamma[is.na(id_lvs$rank_index)==TRUE] , col="red" , add=TRUE)
+##fc
+id_lvs$fc <- apply(post_freq$fc_i, 2, median,)[id_lvs$subject_index]
+plot(fc~rank_index, data=id_lvs)
+abline(mC <- lm(fc ~ rank_index, data = id_lvs))
+
+# dens(id_lvs$fc[is.na(id_lvs$rank_index)==FALSE])
+# dens(id_lvs$fc[is.na(id_lvs$rank_index)==TRUE] , col="red" , add=TRUE)
+```
+```{r sex plots freq}
+#phi
+dens(id_lvs$phi[id_lvs$sex_index==0] , col="blue", main="phi")
+dens(id_lvs$phi[id_lvs$sex_index==1] , col="violet" , add=TRUE)
+points( id_lvs$phi[id_lvs$sex_index==0] ,rep(0, nrow(id_lvs[id_lvs$sex_index==0,])) , col="blue")
+points( id_lvs$phi[id_lvs$sex_index==1] ,rep(0, nrow(id_lvs[id_lvs$sex_index==1,])) , col="violet")
+abline(v=median(id_lvs$phi[id_lvs$sex_index==0]) , col="blue")
+abline(v=median(id_lvs$phi[id_lvs$sex_index==1]) , col="violet")
+##lambda
+dens(id_lvs$lambda[id_lvs$sex_index==0] , col="blue" , main="lambda")
+dens(id_lvs$lambda[id_lvs$sex_index==1] , col="violet" , add=TRUE)
+points( id_lvs$lambda[id_lvs$sex_index==0] ,rep(0, nrow(id_lvs[id_lvs$sex_index==0,])) , col="blue")
+points( id_lvs$lambda[id_lvs$sex_index==1] ,rep(0, nrow(id_lvs[id_lvs$sex_index==1,])) , col="violet")
+abline(v=median(id_lvs$lambda[id_lvs$sex_index==0]) , col="blue")
+abline(v=median(id_lvs$lambda[id_lvs$sex_index==1]) , col="violet")
+#gamma
+dens(id_lvs$gamma[id_lvs$sex_index==0] , col="blue", main="gamma")
+dens(id_lvs$gamma[id_lvs$sex_index==1] , col="violet" , add=TRUE)
+points( id_lvs$gamma[id_lvs$sex_index==0] ,rep(0, nrow(id_lvs[id_lvs$sex_index==0,])) , col="blue")
+points( id_lvs$gamma[id_lvs$sex_index==1] ,rep(0, nrow(id_lvs[id_lvs$sex_index==1,])) , col="violet")
+abline(v=median(id_lvs$gamma[id_lvs$sex_index==0]) , col="blue")
+abline(v=median(id_lvs$gamma[id_lvs$sex_index==1]) , col="violet")
+##fc
+dens(id_lvs$fc[id_lvs$sex_index==0] , col="blue", main="fc")
+dens(id_lvs$fc[id_lvs$sex_index==1] , col="violet" , add=TRUE)
+points( id_lvs$fc[id_lvs$sex_index==0] ,rep(0, nrow(id_lvs[id_lvs$sex_index==0,])) , col="blue")
+points( id_lvs$fc[id_lvs$sex_index==1] ,rep(0, nrow(id_lvs[id_lvs$sex_index==1,])) , col="violet")
+abline(v=median(id_lvs$fc[id_lvs$sex_index==0]) , col="blue")
+abline(v=median(id_lvs$fc[id_lvs$sex_index==1]) , col="violet")
+
+```
+
+```{r age plots freq}
+#phi
+dens(id_lvs$phi[id_lvs$age_index==0] , col="blue", main="phi")
+dens(id_lvs$phi[id_lvs$age_index==1] , col="darkgreen" , add=TRUE)
+points( id_lvs$phi[id_lvs$age_index==0] ,rep(0, nrow(id_lvs[id_lvs$age_index==0,])) , col="blue")
+points( id_lvs$phi[id_lvs$age_index==1] ,rep(0, nrow(id_lvs[id_lvs$age_index==1,])) , col="darkgreen")
+abline(v=median(id_lvs$phi[id_lvs$age_index==0]) , col="blue")
+abline(v=median(id_lvs$phi[id_lvs$age_index==1]) , col="darkgreen")
+
+##lambda
+dens(id_lvs$lambda[id_lvs$age_index==0] , col="blue" , main="lambda")
+dens(id_lvs$lambda[id_lvs$age_index==1] , col="darkgreen" , add=TRUE)
+points( id_lvs$lambda[id_lvs$age_index==0] ,rep(0, nrow(id_lvs[id_lvs$age_index==0,])) , col="blue")
+points( id_lvs$lambda[id_lvs$age_index==1] ,rep(0, nrow(id_lvs[id_lvs$age_index==1,])) , col="darkgreen")
+abline(v=median(id_lvs$lambda[id_lvs$age_index==0]) , col="blue")
+abline(v=median(id_lvs$lambda[id_lvs$age_index==1]) , col="darkgreen")
+
+#gamma
+dens(id_lvs$gamma[id_lvs$age_index==0] , col="blue", main="gamma")
+dens(id_lvs$gamma[id_lvs$age_index==1] , col="darkgreen" , add=TRUE)
+points( id_lvs$gamma[id_lvs$age_index==0] ,rep(0, nrow(id_lvs[id_lvs$age_index==0,])) , col="blue")
+points( id_lvs$gamma[id_lvs$age_index==1] ,rep(0, nrow(id_lvs[id_lvs$age_index==1,])) , col="darkgreen")
+abline(v=median(id_lvs$gamma[id_lvs$age_index==0]) , col="blue")
+abline(v=median(id_lvs$gamma[id_lvs$age_index==1]) , col="darkgreen")
+
+##fc
+dens(id_lvs$fc[id_lvs$age_index==0] , col="blue", main="fc")
+dens(id_lvs$fc[id_lvs$age_index==1] , col="darkgreen" , add=TRUE)
+points( id_lvs$fc[id_lvs$age_index==0] ,rep(0, nrow(id_lvs[id_lvs$age_index==0,])) , col="blue")
+points( id_lvs$fc[id_lvs$age_index==1] ,rep(0, nrow(id_lvs[id_lvs$age_index==1,])) , col="darkgreen")
+abline(v=median(id_lvs$fc[id_lvs$age_index==0]) , col="blue")
+abline(v=median(id_lvs$fc[id_lvs$age_index==1]) , col="darkgreen")
+
+```
+Let plot an acquisition curves for all birdies.
+```{r}
+#freq_dependent learning frequency beforelearning vs. frequency of trait after learning
+
+N1<- seq(from=0 , to=100 , by=1)
+N2<- 100-N1
+FreqN1B4 <- N1/(N1+N2)
+FreqN1After <- rep (0,100)
+plot(FreqN1B4,FreqN1B4 , ylim=c(0,1) , xlim=c(0,1) , ylab="frequency of trait after social learning" , xlab="frequency of trait before social learning",type="n" , bty="n" , cex.lab=1.5)
+for(i in 1:length(id_lvs$fc) ){
+   FreqN1After <- N1^id_lvs$fc[i]/(N1^id_lvs$fc[i]+N2^id_lvs$fc[i])  
+   lines( FreqN1B4,FreqN1After,  col=col.alpha( "darksalmon" ,  alpha=0.1  )  , lwd=1) 
+}
+abline(a=0 , b=1 , lty=2)
+
+```
+# Combo frequency dependence and male
+```{r male freq}
+precis(fit_male_freq , pars=c('lambda','phi','fc','betaq','sigma_i') , depth=2)
+precis(fit_male_freq , pars=c('Rho_i') , depth=3) 
+post_male_freq <- extract(fit_male_freq)
+DensLambda(post_male_freq)
+DensPhi(post_male_freq)
+DensGamma(post_male_freq)
+DensFc(post_male_freq)
+DensBetaq(post_male_freq)
+```
+
 
 # Combo frequency dependence and male
 ```{r male freq}
