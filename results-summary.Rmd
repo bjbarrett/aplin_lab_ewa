@@ -16,25 +16,26 @@ library(RColorBrewer)
 ```
 
 # Overview
-We fit 6 EWA models to start with. In this instance it was from the 60s window only foir the BA group. 
+We fit 6 EWA models to start with. In this instance it was from the 30s window only foir the BA group. 
 Social learning could occur on the first timestep, and $A_{t,k}=0$.
 Now lets load files of model fits. I will run these longer on the final iteration.
+
 ```{r load rds and script , echo=FALSE}
 source("02_01_plot_fcns.R")
-fit_ind <- readRDS("/Users/bbarrett/Downloads/fit_i_60s_slu_all.rds")
-fit_freq <- readRDS("/Users/bbarrett/Downloads/fit_freq_60s_slu_all.rds")
-fit_adult <- readRDS("/Users/bbarrett/Downloads/fit_adult_60s_slu_all.rds")
-fit_male <-  readRDS("/Users/bbarrett/Downloads/fit_male_60s_slu_all.rds")
-fit_rank <-  readRDS("/Users/bbarrett/Downloads/fit_rank_60s_slu_all.rds")
-fit_roost <-  readRDS("/Users/bbarrett/Downloads/fit_roost_60s_slu_all.rds")
-fit_rank_freq <-  readRDS("/Users/bbarrett/Downloads/fit_rank_freq_60s_slu_all.rds")
-fit_adult_freq <-  readRDS("/Users/bbarrett/Downloads/fit_adult_freq_60s_slu_all.rds")
-fit_male_freq <-  readRDS("/Users/bbarrett/Downloads/fit_male_freq_60s_slu_all.rds")
+fit_ind <- readRDS("~/Downloads/fit_i_30s_slu_all.rds")
+fit_freq <- readRDS("~/Downloads/fit_freq_30s_slu_all.rds")
+fit_adult <- readRDS("~/Downloads/fit_adult_30s_slu_all.rds")
+fit_male <-  readRDS("~/Downloads/fit_male_30s_slu_all.rds")
+fit_rank <-  readRDS("~/Downloads/fit_rank_30s_slu_all.rds")
+fit_roost <-  readRDS("~/Downloads/fit_roost_30s_slu_all.rds")
+fit_rank_freq <-  readRDS("~/Downloads/fit_rank_freq_30s_slu_all.rds")
+fit_adult_freq <-  readRDS("~/Downloads/fit_adult_freq_30s_slu_all.rds")
+fit_male_freq <-  readRDS("~/Downloads/fit_male_freq_30s_slu_all.rds")
 
-d <- read.csv("cockatoo_data/ALL_ROOSTS_Almonds_cockatoo_60s.csv")
+d <- read.csv("cockatoo_data/ALL_ROOSTS_Almonds_cockatoo_30s.csv")
 d$subject_index <- as.integer(as.factor(d$subject) )
 d <- clean_names(d)
-
+d$group_index <- as.integer(as.factor(d$group))
 d <- d[with(d, order(subject_index,date, rel_time)), ]
 
 d$bout <- rep(0,nrow(d))
@@ -52,20 +53,21 @@ d$tech_index <- as.integer(as.factor(d$behav1))
 ```
 ## Information Criteria
 First we can look at WAIC scores, although these should not be treated religiously.
-They can give us an overall understanding of variation in the models in predicting the data while penalizing overfitting.But there are caveats with information criteria and time series models.
-```{r info criteria , eval=FALSE}
- compare(fit_ind , fit_freq, fit_male , fit_adult , fit_roost , fit_rank , fit_adult_freq , fit_rank_freq , fit_male_freq)
+They can give us an overall understanding of variation in the models in predicting the data while penalizing overfitting. But there are caveats with information criteria and time series models.
+```{r info criteria , eval=TRUE}
+ ic_tab <- compare(fit_ind , fit_freq, fit_male , fit_adult , fit_roost , fit_rank , fit_adult_freq , fit_rank_freq , fit_male_freq)
+ic_tab
 ```
-<!-- Overall we see the most support for the frequency dependent model with with a weight of `r ic_tab$weight[1]` and WAIC=`r ic_tab$WAIC[1]`. -->Overall we see the most support for the frequency dependent model with with a weight of 1.
+Overall we see the most support for the frequency dependent model with with a weight of `r ic_tab$weight[1]` and WAIC=`r ic_tab$WAIC[1]`. Overall we see the most support for the frequency dependent model with with a weight of 1.
 We see comparable support for roost, rank and male models, with less support for adult. No strong evidence for pure social learning.
 
 The combo models did not get great support, so I am ignoring them in the meantime. We could plot model predictions but there seems to be plenty to do.
+
 # Frequency Dependent Learning
+
 ```{r fdep , eval=TRUE}
 precis(fit_freq , pars=c('lambda' , 'phi' , 'fc' , 'sigma_i') , depth=2)
-precis(fit_ind , pars=c('Rho_i') , depth=3)
-plot(precis(fit_freq , pars=c( 'fc_i' ) , depth=2)
-)
+precis(fit_freq , pars=c('Rho_i') , depth=3) 
 post_freq <- extract(fit_freq)
 DensLambda(post_freq)
 DensPhi(post_freq)
@@ -79,42 +81,114 @@ This is the best supported model. We see that `r sum(post_freq$fc>1)/length(post
 We will also make heatmap plots for each individual based off of the frequency dependent learning model.
 ```{r}
 d$median_choose_red_freq <- apply(post_freq$PrPreds[,,2] , 2 ,  median)
-
 colMain <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(101))# reverse pallette of ramped colors from 0 to 1 by 0.1 so red in 1 and blue is 0
 
 ###BA
 dd <- d[d$group=="BA",]
 dd$subject_group_index <- as.integer(as.factor(dd$subject_index))
-plot(dd$subject_group_index ~ dd$time_hh_min , cex=0.5 , pch=19 ,
+plot(dd$subject_group_index ~ dd$time_hh_min , cex=0.4 , pch=d$group_index +  14  ,
      col=colMain[round(dd$median_choose_red_freq*100)] , main="Group BA"   ) 
 ColorLegend(x=max(dd$time_hh_min) + 50 ,y=max(dd$subject_group_index), 
             cols=colMain , labels=seq(from=0 , to=1 , by=0.1) , cex=0.8)
 
 
-plot(dd$rank_index ~ dd$time_hh_min , cex=0.5 , pch=19 ,
+plot(dd$rank_index ~ dd$time_hh_min , cex=0.4 , pch=d$group_index +  14 ,
      col=colMain[round(dd$median_choose_red_freq*100)] , main="Group BA"   ) 
 
 ### CG
 dd <- d[d$group=="CG",]
 dd$subject_group_index <- as.integer(as.factor(dd$subject_index))
-plot(dd$subject_group_index ~ dd$rel_time , cex=0.5 , pch=19 ,
+plot(dd$subject_group_index ~ dd$rel_time , cex=0.4 , pch=d$group_index +  14 ,
      col=colMain[round(dd$median_choose_red_freq*100)] , main="Group CG"   ) 
 ColorLegend(x=max(dd$rel_time) + 50 ,y=max(dd$subject_group_index), 
             cols=colMain , labels=seq(from=0 , to=1 , by=0.1) , cex=0.8)
 
-plot(dd$rank_index ~ dd$rel_time , cex=0.5 , pch=19 ,
+plot(dd$rank_index ~ dd$rel_time , cex=0.4 , pch=d$group_index +  14 ,
      col=colMain[round(dd$median_choose_red_freq*100)] , main="Group CG"   ) 
 
 #NB
 dd <- d[d$group=="NB",]
 dd$subject_group_index <- as.integer(as.factor(dd$subject_index))
-plot(dd$rank_index ~ dd$rel_time , cex=0.5 , pch=19 ,
+plot(dd$rank_index ~ dd$rel_time , cex=0.4 , pch=d$group_index +  14 ,
      col=colMain[round(dd$median_choose_red_freq*100)] , main="Group NB"   ) 
 ColorLegend(x=max(dd$rel_time) + 50 ,y=max(dd$subject_group_index), 
             cols=colMain , labels=seq(from=0 , to=1 , by=0.1) , cex=0.8)
 
 ```
 
+# Combo frequency dependence and male
+```{r male freq}
+precis(fit_male_freq , pars=c('lambda','phi','fc','betaq','sigma_i') , depth=2)
+precis(fit_male_freq , pars=c('Rho_i') , depth=3) 
+post_male_freq <- extract(fit_male_freq)
+DensLambda(post_male_freq)
+DensPhi(post_male_freq)
+DensGamma(post_male_freq)
+DensFc(post_male_freq)
+DensBetaq(post_male_freq)
+```
+### Individual level varaible predictions
+My hunch is that we will not see clear rank/sex differences, but we can plot estimates of varying effects by these to see if it is worthwhile to fit a model.
+```{r rank plots freq}
+id_lvs <- d[,c("subject" , "subject_index" , "sex_index" , "age_index","rank_index" ),]
+id_lvs <- id_lvs[!duplicated(id_lvs), ]
+str(post_freq)
+apply(post_freq$phi_i, 2, mean,)
+#phi
+id_lvs$phi <- apply(post_freq$phi_i, 2, median,)[id_lvs$subject_index]
+plot(phi~rank_index, data=id_lvs)
+abline(mC <- lm(phi ~ rank_index, data = id_lvs))
+
+# dens(id_lvs$phi[is.na(id_lvs$rank_index)==FALSE])
+# dens(id_lvs$phi[is.na(id_lvs$rank_index)==TRUE] , col="red" , add=TRUE)
+##lambda
+id_lvs$lambda <- apply(post_freq$lambda_i, 2, median,)[id_lvs$subject_index]
+plot(lambda~rank_index, data=id_lvs)
+abline(mC <- lm(lambda ~ rank_index, data = id_lvs))
+
+#gamma
+id_lvs$gamma <- apply(post_freq$gamma_i, 2, median,)[id_lvs$subject_index]
+plot(gamma~rank_index, data=id_lvs)
+abline(mC <- lm(gamma ~ rank_index, data = id_lvs))
+
+# dens(id_lvs$gamma[is.na(id_lvs$rank_index)==FALSE])
+# dens(id_lvs$gamma[is.na(id_lvs$rank_index)==TRUE] , col="red" , add=TRUE)
+##fc
+id_lvs$fc <- apply(post_freq$fc_i, 2, median,)[id_lvs$subject_index]
+plot(fc~rank_index, data=id_lvs)
+abline(mC <- lm(fc ~ rank_index, data = id_lvs))
+
+# dens(id_lvs$fc[is.na(id_lvs$rank_index)==FALSE])
+# dens(id_lvs$fc[is.na(id_lvs$rank_index)==TRUE] , col="red" , add=TRUE)
+```
+```{r sex plots freq}
+#phi
+id_lvs$phi <- apply(post_freq$phi_i, 2, median,)[id_lvs$subject_index]
+plot(phi~rank_index, data=id_lvs)
+abline(mC <- lm(phi ~ rank_index, data = id_lvs))
+
+# dens(id_lvs$phi[is.na(id_lvs$rank_index)==FALSE])
+# dens(id_lvs$phi[is.na(id_lvs$rank_index)==TRUE] , col="red" , add=TRUE)
+##lambda
+id_lvs$lambda <- apply(post_freq$lambda_i, 2, median,)[id_lvs$subject_index]
+plot(lambda~rank_index, data=id_lvs)
+abline(mC <- lm(lambda ~ rank_index, data = id_lvs))
+
+#gamma
+id_lvs$gamma <- apply(post_freq$gamma_i, 2, median,)[id_lvs$subject_index]
+plot(gamma~rank_index, data=id_lvs)
+abline(mC <- lm(gamma ~ rank_index, data = id_lvs))
+
+# dens(id_lvs$gamma[is.na(id_lvs$rank_index)==FALSE])
+# dens(id_lvs$gamma[is.na(id_lvs$rank_index)==TRUE] , col="red" , add=TRUE)
+##fc
+id_lvs$fc <- apply(post_freq$fc_i, 2, median,)[id_lvs$subject_index]
+plot(fc~rank_index, data=id_lvs)
+abline(mC <- lm(fc ~ rank_index, data = id_lvs))
+
+# dens(id_lvs$fc[is.na(id_lvs$rank_index)==FALSE])
+# dens(id_lvs$fc[is.na(id_lvs$rank_index)==TRUE] , col="red" , add=TRUE)
+```
 # Roost-biased Learning
 ```{r}
 post_roost <- extract(fit_roost)
