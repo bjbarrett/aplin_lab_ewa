@@ -3,16 +3,17 @@ library(lubridate)
 d_BA_to_clean <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/cockatoo_data/EWA_raw_data_BA_CG_NB.csv")
 
 d_BA <- d_BA_to_clean[which(d_BA_to_clean$subject !="Ser Onion" & d_BA_to_clean$subject !="corella"),]
+d_BA <-  d_BA[which( d_BA$subject!=""),]
+
 #d_BA <- clean_names(d_BA)
 unique(d_BA$behav1)
 d_BA$choose_red <- ifelse(d_BA$behav1=="R" , 1, 0)
 d_BA$choose_blue <- ifelse(d_BA$behav1=="B" , 1, 0)
 d_BA$open <- ifelse(d_BA$behav2=="op" , 1, 0)
 
-ILVba <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/cockatoo_data/ILV_allgroups.csv",row.names = 1)
+ILVba <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/cockatoo_data/ILV_allgroups.csv")
 ILVba <- clean_names(ILVba)
 colnames(ILVba)[1] <- "id"
-ILVba <- ILVba[which(ILVba$id !="Ser Onion" & ILVba$id !="corella"),]
 
 #plot_raw_data
 
@@ -32,15 +33,13 @@ plot(d_BA$subject_index ~ d_BA$rel.time , col=col_pal[d_BA$choose_blue +1] , pch
 
 #scans every 10 minutes, social window if they were in most recent scan
 #or first time they showed up at feeder since last scan
-ps_BA <- d_BA[,11:361]
+ps_BA <- d_BA[,11:ncol(d_BA)]
 
 nrow(ps_BA)
 nrow(d_BA)
 #just use social information associated with 1 in ps_BA
 d_BA$n_obs_blue <- 0
 d_BA$n_obs_red <- 0
-
-
 
 
 #unique.id <- unique(d_BA$subject)
@@ -79,9 +78,10 @@ for (nobs in 1:nrow(d_BA)){
   
 }
 
-d_BA2 <- d_BA[which(d_BA$subject!=""),]
 
 #get rid of NaNs and make value zero so it does not affect behavior
+d_BA2 <- d_BA
+
 d_BA2$n_obs_blue[is.nan(d_BA2$n_obs_blue)] <- 0
 d_BA2$n_obs_red[is.nan(d_BA2$n_obs_red)] <- 0
 
@@ -93,7 +93,7 @@ d <-d_BA2[with(d_BA2, order(subject, forg_bout)),]
 
 
 d_BA2$sex_index <- ILVba$sex[match(d_BA2$subject,ILVba$id)]
-d_BA2$age_index <- ILVba$age[match(d_BA2$subject,ILVba$id)]
+d_BA2$age_index <- ILVba$ag[match(d_BA2$subject,ILVba$id)]
 
 d_BA2$sex_index[is.na(d_BA2$sex_index)] <- 0
 d_BA2$age_index[is.na(d_BA2$age_index)] <- 0
