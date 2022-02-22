@@ -6,12 +6,12 @@ library('janitor')
 library('beepr')
 #assuming previous cleaning code is run, which we need to add to github
 #d <- read.csv("cockatoo_data/BA_Almonds_cockatoo_60s.csv")
-d <- read.csv("cockatoo_data/ALL_ROOSTS_Almonds_cockatoo_60s.csv")
+d <- read.csv("cockatoo_data/ALL_ROOSTS_Almonds_cockatoo_30s.csv")
 d$subject_index <- as.integer(as.factor(d$subject) )
 d <- clean_names(d)
 
 str(d)
-d <- d[with(d, order(subject_index,date, rel_time)), ]
+d <- d[with(d, order(subject_index,date,rel_time)), ]
 
 d$bout <- rep(0,nrow(d))
 ff <- rep(0,length(unique(d$subject)))
@@ -55,6 +55,8 @@ datalist_s <- list(
   id = d$subject_index ,                                           #individual ID
   N_effects=4                                                                        #number of parameters to estimates
 )
+#scale cues by dividing by max value
+datalist_s$s <- datalist_s$s / max(datalist_s$s)
 
 ###male bias
 datalist_s_male <- list(
@@ -136,6 +138,7 @@ datalist_s_rankfreq <- list(
 )
 
 datalist_s_rankfreq$q <- datalist_s_rankfreq$q / max(datalist_s_rankfreq$q)
+datalist_s_rankfreq$s <- datalist_s_rankfreq$s / max(datalist_s_rankfreq$s)
 
 ##freq dep and adult
 datalist_s_adultfreq <- list(
@@ -152,6 +155,24 @@ datalist_s_adultfreq <- list(
 )
 
 datalist_s_adultfreq$q <- datalist_s_adultfreq$q / max(datalist_s_adultfreq$q)
+datalist_s_adultfreq$s <- datalist_s_adultfreq$s / max(datalist_s_adultfreq$s)
+
+##freq dep and male
+datalist_s_malefreq <- list(
+  N = nrow(d),                            #length of dataset
+  J = length( unique(d$subject_index) ),       #number of individuals
+  K = 2,         #number of processing techniques
+  tech = d$tech_index,           #technique index
+  pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
+  q = cbind(d$s_male_blue,d$s_male_red), 
+  s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J (frequency-dependence)
+  bout = d$bout,
+  id = d$subject_index ,                                           #individual ID
+  N_effects=5                                                                        #number of parameters to estimates
+)
+
+datalist_s_malefreq$q <- datalist_s_malefreq$q / max(datalist_s_malefreq$q)
+datalist_s_malefreq$s <- datalist_s_malefreq$s / max(datalist_s_malefreq$s)
 
 #########model fits
 
@@ -258,21 +279,36 @@ fit_adult_freq= stan( file = 'cockatoo_data/stan_code/ewa_freq_and_cue_slu.stan'
                      warmup=600, 
                      chains=4, 
                      cores=4, 
-                     control=list(adapt_delta=0.99) , 
+                     control=list(adapt_delta=0.999) , 
                      pars=c("phi","lambda","gamma","fc","betaq","phi_i","lambda_i","gamma_i","fc_i","betaq_i","sigma_i","Rho_i","log_lik","PrPreds"), 
                      refresh=100,
                      init=0,
                      seed=as.integer(262)
 )
 
-saveRDS(fit_i, "fit_i_60s_slu_all.rds")
-saveRDS(fit_freq, "fit_freq_60s_slu_all.rds")
-saveRDS(fit_male, "fit_male_60s_slu_all.rds")
-saveRDS(fit_adult, "fit_adult_60s_slu_all.rds")
-saveRDS(fit_roost, "fit_roost_60s_slu_all.rds")
-saveRDS(fit_rank, "fit_rank_60s_slu_all.rds")
-saveRDS(fit_rank_freq, "fit_rank_freq_60s_slu_all.rds")
-saveRDS(fit_adult_freq, "fit_adult_freq_60s_slu_all.rds")
+### male and freq bias
+fit_male_freq= stan( file = 'cockatoo_data/stan_code/ewa_freq_and_cue_slu.stan', 
+                      data = datalist_s_malefreq ,
+                      iter = 1200, 
+                      warmup=600, 
+                      chains=4, 
+                      cores=4, 
+                      control=list(adapt_delta=0.999) , 
+                      pars=c("phi","lambda","gamma","fc","betaq","phi_i","lambda_i","gamma_i","fc_i","betaq_i","sigma_i","Rho_i","log_lik","PrPreds"), 
+                      refresh=100,
+                      init=0,
+                      seed=as.integer(2723)
+)
+
+saveRDS(fit_i, "fit_i_30s_slu_all.rds")
+saveRDS(fit_freq, "fit_freq_30s_slu_all.rds")
+saveRDS(fit_male, "fit_male_30s_slu_all.rds")
+saveRDS(fit_adult, "fit_adult_30s_slu_all.rds")
+saveRDS(fit_roost, "fit_roost_30s_slu_all.rds")
+saveRDS(fit_rank, "fit_rank_30s_slu_all.rds")
+saveRDS(fit_rank_freq, "fit_rank_freq_30s_slu_all.rds")
+saveRDS(fit_adult_freq, "fit_adult_freq_30s_slu_all.rds")
+saveRDS(fit_male_freq, "fit_male_freq_30s_slu_all.rds")
 
 # 
 # ###experimental IL
