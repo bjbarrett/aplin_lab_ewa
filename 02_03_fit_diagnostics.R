@@ -1,5 +1,6 @@
+#load model outpout
+load("/Users/bbarrett/Downloads/fit_rank_freq_60s_slu_all.rds")
 ##individual learning 
-
 post_ind <- extract(fit_i)
 
 precis(fit_i)
@@ -14,6 +15,8 @@ traceplot(fit_i , pars='lambda')
 traceplot(fit_i , pars='phi')
 
 ##freq dep
+fit_freq <- readRDS("/Users/bbarrett/Downloads/fit_freq_60s_slu_all.rds")
+
 post_freq <- extract(fit_freq)
 str(post_freq)
 

@@ -57,19 +57,21 @@ plot(dd$rank_index ~ dd$time_hh_min , cex=0.5 , pch=19 ,
 dd <- d[d$group=="CG",]
 dd$subject_group_index <- as.integer(as.factor(dd$subject_index))
 plot(dd$subject_group_index ~ dd$rel_time , cex=0.5 , pch=19 ,
-     col=colMain[round(dd$mean_choose_red_freq*100)] , main="Group CG"   ) 
+     col=colMain[round(dd$median_choose_red_freq*100)] , main="Group CG"   ) 
 ColorLegend(x=max(dd$rel_time) + 50 ,y=max(dd$subject_group_index), 
             cols=colMain , labels=seq(from=0 , to=1 , by=0.1) , cex=0.8)
 
 plot(dd$rank_index ~ dd$rel_time , cex=0.5 , pch=19 ,
-     col=colMain[round(dd$mean_choose_red_freq*100)] , main="Group CG"   ) 
+     col=colMain[round(dd$median_choose_red_freq*100)] , main="Group CG"   ) 
+ColorLegend(x=max(dd$rel_time) + 50 , y=max(dd$rank_index, na.rm=TRUE), 
+            cols=colMain , labels=seq(from=0 , to=1 , by=0.1) , cex=0.8)
 
 #NB
 dd <- d[d$group=="NB",]
 dd$subject_group_index <- as.integer(as.factor(dd$subject_index))
 plot(dd$rank_index ~ dd$rel_time , cex=0.5 , pch=19 ,
-     col=colMain[round(dd$mean_choose_red_freq*100)] , main="Group NB"   ) 
-ColorLegend(x=max(dd$rel_time) + 50 ,y=max(dd$subject_group_index), 
+     col=colMain[round(dd$median_choose_red_freq*100)] , main="Group NB"   ) 
+ColorLegend(x=max(dd$rel_time) + 100 ,y=max(dd$rank_index , na.rm=TRUE), 
             cols=colMain , labels=seq(from=0 , to=1 , by=0.1) , cex=0.8)
 
 
