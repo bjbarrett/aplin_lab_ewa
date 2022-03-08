@@ -1,9 +1,14 @@
 library(janitor)
 library(lubridate)
-d_BA_to_clean <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/cockatoo_data/EWA_raw_data_BA_CG_NB.csv")
+library(beepr)
+
+d_BA_to_clean <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/EWA_raw_data_BA_CG_NB_MA_BG.csv")
 
 d_BA <- d_BA_to_clean[which(d_BA_to_clean$subject !="Ser Onion" & d_BA_to_clean$subject !="corella"),]
 d_BA <-  d_BA[which( d_BA$subject!=""),]
+
+d_BA <- d_BA[order(d_BA$date,d_BA$time_hh_min),]
+
 
 #d_BA <- clean_names(d_BA)
 unique(d_BA$behav1)
@@ -11,10 +16,15 @@ d_BA$choose_red <- ifelse(d_BA$behav1=="R" , 1, 0)
 d_BA$choose_blue <- ifelse(d_BA$behav1=="B" , 1, 0)
 d_BA$open <- ifelse(d_BA$behav2=="op" , 1, 0)
 
-ILVba <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/cockatoo_data/ILV_allgroups.csv")
+ILVba <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/cockatoo_data/ILV_allgroups.csv",row.names = 1)
 ILVba <- clean_names(ILVba)
-colnames(ILVba)[1] <- "id"
+ILVba$tutor_red <- 0
+ILVba$tutor_blue <- 0
 
+ILVba$tutor_red[ILVba$id=="X11"] <- 1
+ILVba$tutor_red[ILVba$id=="BNV_H_CG"] <- 1
+ILVba$tutor_blue[ILVba$id=="BPO_V_BA"] <- 1
+ILVba$tutor_blue[ILVba$id=="MVT_V_BA"] <- 1
 #plot_raw_data
 
 ####run this reight before model in case subsetting occurs
@@ -33,7 +43,7 @@ plot(d_BA$subject_index ~ d_BA$rel.time , col=col_pal[d_BA$choose_blue +1] , pch
 
 #scans every 10 minutes, social window if they were in most recent scan
 #or first time they showed up at feeder since last scan
-ps_BA <- d_BA[,11:ncol(d_BA)]
+ps_BA <- d_BA[,11:510]
 
 nrow(ps_BA)
 nrow(d_BA)
@@ -169,6 +179,7 @@ for (nobs in 1:nrow(d_BA2)){
 freq_highrank_red <- matrix(0,nrow=nrow(d_BA2),ncol=ncol(ps_BA)) ##sum values where we tally up ones
 freq_highrank_blue <- matrix(0,nrow=nrow(d_BA2),ncol=ncol(ps_BA))
 
+d_BA2$rank_index <- NA
 
 for (i in 1:nrow(d_BA2)) { # rank calculated at each site
   for (j in 1:nrow(ILV)) {
@@ -181,6 +192,7 @@ for (i in 1:nrow(d_BA2)) { # rank calculated at each site
     if (d_BA2$group[i]=="NB" & d_BA2$subject[i]==ILV$id[j]) {
       d_BA2$rank_index[i] <- ILV$rank_nb[j]
     }
+
   }
 }
 
@@ -204,7 +216,7 @@ for (i in 1:nrow(rank.matrix)) {
     }
   }
 }
-
+beep(2)
 
 rank.matrix[is.na(rank.matrix)] <- 0
 rank_similarity <- matrix(0,nrow=nrow(rank.matrix),ncol=ncol(rank.matrix))
