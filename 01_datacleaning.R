@@ -1,9 +1,10 @@
 library(janitor)
 library(lubridate)
 library(beepr)
+library(readr)
 
-d_BA_to_clean <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/EWA_raw_data_BA_CG_NB_MA_BG.csv")
-
+#d_BA_to_clean <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/EWA_raw_data_BA_CG_NB_MA_BG.csv")
+d_BA_to_clean <- read.csv("~/projects/aplin_lab_ewa/cockatoo_data/EWA_raw_data_BA_CG_NB_MA_NB.csv" )
 d_BA <- d_BA_to_clean[which(d_BA_to_clean$subject !="Ser Onion" & d_BA_to_clean$subject !="corella"),]
 d_BA <-  d_BA[which( d_BA$subject!=""),]
 
@@ -16,11 +17,14 @@ d_BA$choose_red <- ifelse(d_BA$behav1=="R" , 1, 0)
 d_BA$choose_blue <- ifelse(d_BA$behav1=="B" , 1, 0)
 d_BA$open <- ifelse(d_BA$behav2=="op" , 1, 0)
 
-ILVba <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/cockatoo_data/ILV_allgroups.csv",row.names = 1)
+#ILVba <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/cockatoo_data/ILV_allgroups.csv",row.names = 1)
+ILVba <- read.csv("~/projects/aplin_lab_ewa/cockatoo_data/ILV_allgroups.csv",row.names = 1)
+
 ILVba <- clean_names(ILVba)
 ILVba$tutor_red <- 0
 ILVba$tutor_blue <- 0
 
+#add index for tutor to seed attraction score
 ILVba$tutor_red[ILVba$id=="X11"] <- 1
 ILVba$tutor_red[ILVba$id=="BNV_H_CG"] <- 1
 ILVba$tutor_blue[ILVba$id=="BPO_V_BA"] <- 1
@@ -71,7 +75,7 @@ for( i in 1:nrow(d_BA) ){ # creates 2 matrices, specifying if individual was pre
     }
 }
 
-win_width <- 2*60 #social info memory window in seconds (num_min*60secs)
+win_width <- 0.5*60 #social info memory window in seconds (num_min*60secs)
 
 d_BA$obs_index <- seq(1:nrow(d_BA)) #unique sequential value to each row after ordering dataframe by timestamp
 ILV$ID_all_index <- as.integer(as.factor(ILV$id))
@@ -304,5 +308,5 @@ for (nobs in 1:nrow(d_BA2)){
 }
 
 
-write.csv(d_BA2,'C:/Users/jpenndorf/ownCloud/EWA/aplin_lab_ewa/cockatoo_data/ALL_ROOSTS_Almonds_cockatoo_120s.csv')
+write.csv(d_BA2,'~/projects/aplin_lab_ewa/cockatoo_data/ALL_ROOSTS_Almonds_cockatoo_30s.csv')
 
