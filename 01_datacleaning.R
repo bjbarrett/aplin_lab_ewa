@@ -3,8 +3,10 @@ library(lubridate)
 library(beepr)
 library(readr)
 
-#d_BA_to_clean <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/EWA_raw_data_BA_CG_NB_MA_BG.csv")
-d_BA_to_clean <- read.csv("~/projects/aplin_lab_ewa/cockatoo_data/EWA_raw_data_BA_CG_NB_MA_NB.csv" )
+d_BA_to_clean <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/EWA_raw_data_BA_CG_NB_MA_BG.csv")
+d_BA_to_clean$subject[d_BA_to_clean$subject=="Msmu_V_BA"]<- "Msmu_BA"
+d_BA_to_clean$subject[d_BA_to_clean$subject=="Msmush_V_BA"]<- "Msmu_BA"
+
 d_BA <- d_BA_to_clean[which(d_BA_to_clean$subject !="Ser Onion" & d_BA_to_clean$subject !="corella"),]
 d_BA <-  d_BA[which( d_BA$subject!=""),]
 
@@ -17,9 +19,8 @@ d_BA$choose_red <- ifelse(d_BA$behav1=="R" , 1, 0)
 d_BA$choose_blue <- ifelse(d_BA$behav1=="B" , 1, 0)
 d_BA$open <- ifelse(d_BA$behav2=="op" , 1, 0)
 
-#ILVba <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/cockatoo_data/ILV_allgroups.csv",row.names = 1)
-ILVba <- read.csv("~/projects/aplin_lab_ewa/cockatoo_data/ILV_allgroups.csv",row.names = 1)
 
+ILVba <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/cockatoo_data/ILV_allgroups20220310.csv",row.names = 1)
 ILVba <- clean_names(ILVba)
 ILVba$tutor_red <- 0
 ILVba$tutor_blue <- 0
@@ -47,7 +48,7 @@ plot(d_BA$subject_index ~ d_BA$rel.time , col=col_pal[d_BA$choose_blue +1] , pch
 
 #scans every 10 minutes, social window if they were in most recent scan
 #or first time they showed up at feeder since last scan
-ps_BA <- d_BA[,11:510]
+ps_BA <- d_BA[,11:541]
 
 nrow(ps_BA)
 nrow(d_BA)
