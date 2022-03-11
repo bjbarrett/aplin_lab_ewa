@@ -106,73 +106,73 @@ datalist_s_roost <- list(
   N_effects=4                                                                        #number of parameters to estimates
 )
 datalist_s_roost$q <- datalist_s_roost$q / max(datalist_s_roost$q)
-
-###rank bias
-datalist_s_rank <- list(
-  N = nrow(d),                            #length of dataset
-  J = length( unique(d$subject_index) ),       #number of individuals
-  K = 2,         #number of processing techniques
-  tech = d$tech_index,           #technique index
-  pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
-  s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J
-  q = cbind(d$s_highrank_blue,d$s_highrank_red), 
-  bout = d$bout,
-  id = d$subject_index ,                                           #individual ID
-  N_effects=4                                                                        #number of parameters to estimates
-)
-datalist_s_rank$q <- datalist_s_rank$q / max(datalist_s_rank$q)
-
-
-##freq dep and rank
-datalist_s_rankfreq <- list(
-  N = nrow(d),                            #length of dataset
-  J = length( unique(d$subject_index) ),       #number of individuals
-  K = 2,         #number of processing techniques
-  tech = d$tech_index,           #technique index
-  pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
-  q = cbind(d$s_highrank_blue,d$s_highrank_red), 
-  s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J (frequency-dependence)
-  bout = d$bout,
-  id = d$subject_index ,                                           #individual ID
-  N_effects=5                                                                        #number of parameters to estimates
-)
-
-datalist_s_rankfreq$q <- datalist_s_rankfreq$q / max(datalist_s_rankfreq$q)
-datalist_s_rankfreq$s <- datalist_s_rankfreq$s / max(datalist_s_rankfreq$s)
-
-##freq dep and adult
-datalist_s_adultfreq <- list(
-  N = nrow(d),                            #length of dataset
-  J = length( unique(d$subject_index) ),       #number of individuals
-  K = 2,         #number of processing techniques
-  tech = d$tech_index,           #technique index
-  pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
-  q = cbind(d$s_adult_blue,d$s_adult_red), 
-  s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J (frequency-dependence)
-  bout = d$bout,
-  id = d$subject_index ,                                           #individual ID
-  N_effects=5                                                                        #number of parameters to estimates
-)
-
-datalist_s_adultfreq$q <- datalist_s_adultfreq$q / max(datalist_s_adultfreq$q)
-datalist_s_adultfreq$s <- datalist_s_adultfreq$s / max(datalist_s_adultfreq$s)
-
-##freq dep and male
-datalist_s_malefreq <- list(
-  N = nrow(d),                            #length of dataset
-  J = length( unique(d$subject_index) ),       #number of individuals
-  K = 2,         #number of processing techniques
-  tech = d$tech_index,           #technique index
-  pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
-  q = cbind(d$s_male_blue,d$s_male_red), 
-  s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J (frequency-dependence)
-  bout = d$bout,
-  id = d$subject_index ,                                           #individual ID
-  N_effects=5                                                                        #number of parameters to estimates
-)
-
-datalist_s_malefreq$q <- datalist_s_malefreq$q / max(datalist_s_malefreq$q)
-datalist_s_malefreq$s <- datalist_s_malefreq$s / max(datalist_s_malefreq$s)
+# 
+# ###rank bias
+# datalist_s_rank <- list(
+#   N = nrow(d),                            #length of dataset
+#   J = length( unique(d$subject_index) ),       #number of individuals
+#   K = 2,         #number of processing techniques
+#   tech = d$tech_index,           #technique index
+#   pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
+#   s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J
+#   q = cbind(d$s_highrank_blue,d$s_highrank_red), 
+#   bout = d$bout,
+#   id = d$subject_index ,                                           #individual ID
+#   N_effects=4                                                                        #number of parameters to estimates
+# )
+# datalist_s_rank$q <- datalist_s_rank$q / max(datalist_s_rank$q)
+# 
+# 
+# ##freq dep and rank
+# datalist_s_rankfreq <- list(
+#   N = nrow(d),                            #length of dataset
+#   J = length( unique(d$subject_index) ),       #number of individuals
+#   K = 2,         #number of processing techniques
+#   tech = d$tech_index,           #technique index
+#   pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
+#   q = cbind(d$s_highrank_blue,d$s_highrank_red), 
+#   s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J (frequency-dependence)
+#   bout = d$bout,
+#   id = d$subject_index ,                                           #individual ID
+#   N_effects=5                                                                        #number of parameters to estimates
+# )
+# 
+# datalist_s_rankfreq$q <- datalist_s_rankfreq$q / max(datalist_s_rankfreq$q)
+# datalist_s_rankfreq$s <- datalist_s_rankfreq$s / max(datalist_s_rankfreq$s)
+# 
+# ##freq dep and adult
+# datalist_s_adultfreq <- list(
+#   N = nrow(d),                            #length of dataset
+#   J = length( unique(d$subject_index) ),       #number of individuals
+#   K = 2,         #number of processing techniques
+#   tech = d$tech_index,           #technique index
+#   pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
+#   q = cbind(d$s_adult_blue,d$s_adult_red), 
+#   s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J (frequency-dependence)
+#   bout = d$bout,
+#   id = d$subject_index ,                                           #individual ID
+#   N_effects=5                                                                        #number of parameters to estimates
+# )
+# 
+# datalist_s_adultfreq$q <- datalist_s_adultfreq$q / max(datalist_s_adultfreq$q)
+# datalist_s_adultfreq$s <- datalist_s_adultfreq$s / max(datalist_s_adultfreq$s)
+# 
+# ##freq dep and male
+# datalist_s_malefreq <- list(
+#   N = nrow(d),                            #length of dataset
+#   J = length( unique(d$subject_index) ),       #number of individuals
+#   K = 2,         #number of processing techniques
+#   tech = d$tech_index,           #technique index
+#   pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
+#   q = cbind(d$s_male_blue,d$s_male_red), 
+#   s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J (frequency-dependence)
+#   bout = d$bout,
+#   id = d$subject_index ,                                           #individual ID
+#   N_effects=5                                                                        #number of parameters to estimates
+# )
+# 
+# datalist_s_malefreq$q <- datalist_s_malefreq$q / max(datalist_s_malefreq$q)
+# datalist_s_malefreq$s <- datalist_s_malefreq$s / max(datalist_s_malefreq$s)
 
 #########model fits
 
@@ -188,6 +188,18 @@ fit_i = stan( file = 'cockatoo_data/stan_code/ewa_ind.stan',
               seed=as.integer(20210917)
               )
 
+fit_i_bias = stan( file = 'cockatoo_data/stan_code/ewa_ind_bias.stan', 
+              data = datalist_i ,
+              iter = 1200, 
+              warmup=600, 
+              chains=4, 
+              cores=4, 
+              control=list(adapt_delta=0.9) , 
+              pars=c("phi" , "lambda" ,"phi_i" , "psi" , "lambda_i" , "sigma_i" ,"Rho_i", "log_lik" ,"PrPreds" ), 
+              refresh=100,
+              seed=as.integer(20)
+)
+
 ####frequency dependent learning model
 fit_freq = stan( file = 'cockatoo_data/stan_code/ewa_freq_slu.stan', 
                  data = datalist_s ,
@@ -201,6 +213,20 @@ fit_freq = stan( file = 'cockatoo_data/stan_code/ewa_freq_slu.stan',
                  init=0,
                  seed=as.integer(5498)
 )
+
+fit_freq_bias = stan( file = 'cockatoo_data/stan_code/ewa_freq_slu_bias.stan', 
+                 data = datalist_s ,
+                 iter = 1200, 
+                 warmup=600, 
+                 chains=4, 
+                 cores=4, 
+                 control=list(adapt_delta=0.99) , 
+                 pars=c("phi","lambda","gamma","fc", "psi","phi_i","lambda_i","gamma_i","fc_i","sigma_i","Rho_i","log_lik","PrPreds"), 
+                 refresh=100,
+                 init=0,
+                 seed=as.integer(567)
+)
+
 
 ####male-bias
 fit_male= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu.stan', 
@@ -216,6 +242,18 @@ fit_male= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu.stan',
                  seed=as.integer(222)
 )
 
+fit_male_bias= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu_bias.stan', 
+                data = datalist_s_male ,
+                iter = 1200, 
+                warmup=600, 
+                chains=4, 
+                cores=4, 
+                control=list(adapt_delta=0.99) , 
+                pars=c("phi","lambda","gamma","betaq","psi" ,"phi_i","lambda_i","gamma_i","betaq_i","sigma_i","Rho_i","log_lik","PrPreds"), 
+                refresh=100,
+                init=0,
+                seed=as.integer(98)
+)
 ###adult-bias
 fit_adult= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu.stan', 
                 data = datalist_s_adult ,
@@ -230,6 +268,18 @@ fit_adult= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu.stan',
                 seed=as.integer(543)
 )
 
+fit_adult_bias= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu_bias.stan', 
+                 data = datalist_s_adult ,
+                 iter = 1200, 
+                 warmup=600, 
+                 chains=4, 
+                 cores=4, 
+                 control=list(adapt_delta=0.99) , 
+                 pars=c("phi","lambda","gamma","betaq","phi_i", "psi" ,"lambda_i","gamma_i","betaq_i","sigma_i","Rho_i","log_lik","PrPreds"), 
+                 refresh=100,
+                 init=0,
+                 seed=as.integer(93)
+)
 ### roost bias
 fit_roost= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu.stan', 
                  data = datalist_s_roost ,
@@ -239,6 +289,19 @@ fit_roost= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu.stan',
                  cores=4, 
                  control=list(adapt_delta=0.99) , 
                  pars=c("phi","lambda","gamma","betaq","phi_i","lambda_i","gamma_i","betaq_i","sigma_i","Rho_i","log_lik","PrPreds"), 
+                 refresh=100,
+                 init=0,
+                 seed=as.integer(1649)
+)
+
+fit_roost_bias= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu_bias.stan', 
+                 data = datalist_s_roost ,
+                 iter = 1200, 
+                 warmup=600, 
+                 chains=4, 
+                 cores=4, 
+                 control=list(adapt_delta=0.99) , 
+                 pars=c("phi","lambda","gamma","betaq","psi","phi_i","lambda_i","gamma_i","betaq_i","sigma_i","Rho_i","log_lik","PrPreds"), 
                  refresh=100,
                  init=0,
                  seed=as.integer(1649)
@@ -256,6 +319,19 @@ fit_rank= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu.stan',
                  refresh=100,
                  init=0,
                  seed=as.integer(5209)
+)
+
+fit_rank_bias= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu_bias.stan', 
+                data = datalist_s_rank ,
+                iter = 1200, 
+                warmup=600, 
+                chains=4, 
+                cores=4, 
+                control=list(adapt_delta=0.99) , 
+                pars=c("phi","lambda","gamma","betaq","psi","phi_i","lambda_i","gamma_i","betaq_i","sigma_i","Rho_i","log_lik","PrPreds"), 
+                refresh=100,
+                init=0,
+                seed=as.integer(183)
 )
 
 ### rank and freq bias
@@ -279,7 +355,7 @@ fit_adult_freq= stan( file = 'cockatoo_data/stan_code/ewa_freq_and_cue_slu.stan'
                      warmup=600, 
                      chains=4, 
                      cores=4, 
-                     control=list(adapt_delta=0.999) , 
+                     control=list(adapt_delta=0.99) , 
                      pars=c("phi","lambda","gamma","fc","betaq","phi_i","lambda_i","gamma_i","fc_i","betaq_i","sigma_i","Rho_i","log_lik","PrPreds"), 
                      refresh=100,
                      init=0,

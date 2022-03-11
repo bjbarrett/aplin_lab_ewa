@@ -15,6 +15,7 @@ parameters {
     vector<lower=0>[N_effects] sigma_i;       // standard deviations of varying effects
     matrix[N_effects,J] zed_i;                // individual z-scores for cholesky decomp
     cholesky_factor_corr[N_effects] L_Rho_i;  // correlation matrix
+    simplex[K] psi;                           // simplex for bias
 }
 
 transformed parameters{
@@ -40,13 +41,14 @@ model {
     sigma_i ~ exponential(1);
     to_vector(zed_i) ~ normal(0,0.5);
     L_Rho_i ~ lkj_corr_cholesky(3);
-    
+    psi ~ dirichlet(rep_vector(4,K));
+
     //likelihood loop
     for ( i in 1:N ) {
         //update attractions
         for ( j in 1:K ) {
             if ( bout[i] > 1 ) {
-                AC[j] = (1-phi)*AC[j] + phi*pay_i[i-1,j];
+                AC[j] = (1-phi)*AC[j] + phi*pay_i[i-1,j] + psi[j];
             } else {
                 AC[j] = 0;
             }
@@ -102,7 +104,7 @@ generated quantities{
         //update attractions
         for ( j in 1:K ) {
             if ( bout[i] > 1 ) {
-                AC[j] = (1-phi_i[id[i]])*AC[j] + phi_i[id[i]]*pay_i[i-1,j];
+                AC[j] = (1-phi_i[id[i]])*AC[j] + phi_i[id[i]]*pay_i[i-1,j] + psi[j];
             } else {
                 AC[j] = 0;
             }
