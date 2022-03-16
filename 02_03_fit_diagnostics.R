@@ -1,5 +1,5 @@
 #load model outpout
-load("/Users/bbarrett/Downloads/fit_rank_freq_60s_slu_all.rds")
+#load("/Users/bbarrett/Downloads/fit_rank_freq_60s_slu_all.rds")
 ####################individual learning 
 post_ind <- extract(fit_i)
 
@@ -30,6 +30,119 @@ traceplot(fit_i_bias  , pars='sigma_i')
 traceplot(fit_i_bias  , pars='lambda')
 traceplot(fit_i_bias  , pars='phi')
 traceplot(fit_i_bias  , pars='psi')
+###a
+post_ind_bias_a <- extract(fit_i_bias_a)
+
+precis(fit_i_bias_a , pars='lambda_i' , depth=2)
+precis(fit_i_bias_a , pars='phi_i' , depth=2)
+precis(fit_i_bias_a , pars='psi' , depth=2)
+plot(precis(fit_i_bias_a , pars='A' , depth=3))
+DensLambda(post_ind_bias_a )
+DensPhi(post_ind_bias_a )
+
+dens(post_ind_bias_a$psi[,1] , col="blue" , xlim=c(.4,.6))
+dens(post_ind_bias_a$psi[,2] , col="red" , add=TRUE)
+#lambda
+dens(exp(post_ind_bias_a$mu[,1]  + post_ind_bias_a$A[,1,1]) , col="red" , xlim=c(0,5))
+abline(v=median(exp(post_ind_bias_a$mu[,1]  + post_ind_bias_a$A[,1,1])), col="red")
+dens(exp(post_ind_bias_a$mu[,1]  + post_ind_bias_a$A[,1,2]) , col="green" , add=TRUE)
+abline(v=median(exp(post_ind_bias_a$mu[,1]  + post_ind_bias_a$A[,1,2])), col="green")
+dens(exp(post_ind_bias_a$mu[,1]  + post_ind_bias_a$A[,1,3]) , col="blue" , add=TRUE)
+abline(v=median(exp(post_ind_bias_a$mu[,1]  + post_ind_bias_a$A[,1,3])), col="blue")
+#phi
+dens(logistic(post_ind_bias_a$mu[,2]  + post_ind_bias_a$A[,2,1]) , col="red" , xlim=c(0,1))
+abline(v=median(logistic(post_ind_bias_a$mu[,2]  + post_ind_bias_a$A[,2,1])), col="red")
+dens(logistic(post_ind_bias_a$mu[,2]  + post_ind_bias_a$A[,2,2]) , col="green" , add=TRUE)
+abline(v=median(logistic(post_ind_bias_a$mu[,2]  + post_ind_bias_a$A[,2,2])), col="green")
+dens(logistic(post_ind_bias_a$mu[,2]  + post_ind_bias_a$A[,2,3]) , col="blue" , add=TRUE)
+abline(v=median(logistic(post_ind_bias_a$mu[,2]  + post_ind_bias_a$A[,2,3])), col="blue")
+
+dens(post_ind_bias_a$A[,1,2] , add=TRUE , col="green")
+dens(post_ind_bias_a$A[,1,3] , add=TRUE , col="blue")
+## as
+post_ind_bias_as <- extract(fit_i_bias_as)
+#lambda
+dens(exp( post_ind_bias_as$A[,1,1]) , col="red" , xlim=c(0,5))
+abline(v=median(exp( post_ind_bias_as$A[,1,1])), col="red")
+dens(exp(post_ind_bias_as$A[,1,2]) , col="green" , add=TRUE)
+abline(v=median(exp(post_ind_bias_as$A[,1,2])), col="green")
+dens(exp(post_ind_bias_as$A[,1,3]) , col="blue" , add=TRUE)
+abline(v=median(exp( post_ind_bias_as$A[,1,3])), col="blue")
+#phi
+dens(logistic( post_ind_bias_a2$A[,2,1]) , col="red" , xlim=c(0,1))
+abline(v=median(logistic( post_ind_bias_a2$A[,2,1])), col="red")
+dens(logistic(post_ind_bias_a2$A[,2,2]) , col="green" , add=TRUE)
+abline(v=median(logistic(post_ind_bias_a2$A[,2,2])), col="green")
+dens(logistic(post_ind_bias_a2$A[,2,3]) , col="blue" , add=TRUE)
+abline(v=median(logistic(post_ind_bias_a2$A[,2,3])), col="blue")
+
+###a2
+post_ind_bias_a2 <- extract(fit_i_bias_a2)
+str(post_ind_bias_a2)
+#lambda
+dens(exp( post_ind_bias_a2$A[,1,1]) , col="red" , xlim=c(0,5))
+abline(v=median(exp( post_ind_bias_a2$A[,1,1])), col="red")
+dens(exp(post_ind_bias_a2$A[,1,2]) , col="green" , add=TRUE)
+abline(v=median(exp(post_ind_bias_a2$A[,1,2])), col="green")
+dens(exp(post_ind_bias_a2$A[,1,3]) , col="blue" , add=TRUE)
+abline(v=median(exp( post_ind_bias_a2$A[,1,3])), col="blue")
+#phi
+dens(logistic( post_ind_bias_a2$A[,2,1]) , col="red" , xlim=c(0,1))
+abline(v=median(logistic( post_ind_bias_a2$A[,2,1])), col="red")
+dens(logistic(post_ind_bias_a2$A[,2,2]) , col="green" , add=TRUE)
+abline(v=median(logistic(post_ind_bias_a2$A[,2,2])), col="green")
+dens(logistic(post_ind_bias_a2$A[,2,3]) , col="blue" , add=TRUE)
+abline(v=median(logistic(post_ind_bias_a2$A[,2,3])), col="blue")
+
+##as2 does the weird additive thing 
+post_ind_bias_as2 <- extract(fit_i_bias_as2)
+str(post_ind_bias_as2)
+dens(exp( post_ind_bias_as2$A[,1,1]) , col="red" , xlim=c(0,5))
+abline(v=median(exp( post_ind_bias_as2$A[,1,1])), col="red")
+dens(exp(post_ind_bias_as2$A[,1,2]) , col="green" , add=TRUE)
+abline(v=median(exp(post_ind_bias_as2$A[,1,2])), col="green")
+dens(exp(post_ind_bias_as2$A[,1,3]) , col="blue" , add=TRUE)
+abline(v=median(exp( post_ind_bias_as2$A[,1,3])), col="blue")
+#phi
+dens(logistic( post_ind_bias_as2$A[,2,1]) , col="red" , xlim=c(0,1))
+abline(v=median(logistic( post_ind_bias_as2$A[,2,1])), col="red")
+dens(logistic(post_ind_bias_as2$A[,2,2]) , col="green" , add=TRUE)
+abline(v=median(logistic(post_ind_bias_as2$A[,2,2])), col="green")
+dens(logistic(post_ind_bias_as2$A[,2,3]) , col="blue" , add=TRUE)
+abline(v=median(logistic(post_ind_bias_as2$A[,2,3])), col="blue")
+
+##int
+post_ind_bias_as_int <- extract(fit_i_bias_as_int)
+dens(post_ind_bias_as_int$logit_phi[,1,])
+dens(post_ind_bias_as_int$logit_phi[,2,] , add=TRUE , col="blue")
+
+dens(post_ind_bias_as_int$logit_phi[,,1])
+dens(post_ind_bias_as_int$logit_phi[,,2] , add=TRUE , col="blue")
+str(post_ind_bias_as_int)
+plot(precis(fit_i_bias_as_int, depth=3 , pars=c('log_lambda') ) )
+plot(precis(fit_i_bias_as_int, depth=3 , pars=c('logit_phi') ) )
+
+####final bposs?
+post_i2 <- extract(fit)
+
+precis(fit)
+precis(fit , pars='lambda_i' , depth=2)
+precis(fit , pars='phi_i' , depth=2)
+plot(precis(fit , pars='phi_i' , depth=2))
+plot(precis(fit , pars='lambda_i' , depth=2))
+plot(precis(fit , pars='psi' , depth=2))
+
+precis(fit , pars='G' , depth=3))
+precis(fit , pars='log_lambda' , depth=3))
+precis(fit , pars='logit_phi' , depth=3))
+
+dens(post_i2$psi[,1] , col="blue" , xlim=c(.4,.6))
+dens(post_i2$psi[,2] , col="red" , add=TRUE)
+
+traceplot(fit , pars='sigma_i')
+traceplot(fit , pars='lambda')
+traceplot(fit , pars='G')
+traceplot(fit , pars='psi')
 
 #####################freq dep
 fit_freq <- readRDS("/Users/bbarrett/Downloads/fit_freq_60s_slu_all.rds")
