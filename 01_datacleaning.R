@@ -21,7 +21,7 @@ d_BA$choose_blue <- ifelse(d_BA$behav1=="B" , 1, 0)
 d_BA$open <- ifelse(d_BA$behav2=="op" , 1, 0)
 
 #ILVba <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/cockatoo_data/ILV_allgroups20220310.csv",row.names = 1)
-ILVba <- read.csv("cockatoo_data/ILV_allgroups20220309.csv",row.names = 1)
+ILVba <- read.csv("cockatoo_data/ILV_allgroups20220310.csv",row.names = 1)
 
 ILVba <- clean_names(ILVba)
 ILVba$tutor_red <- 0
@@ -302,4 +302,5 @@ beep(2)
 df <- d_BA2
 df[ , c(11:541)] <- list(NULL)
 colnames(df)
+str(df)
 write.csv(df,'ALL_ROOSTS_Almonds_cockatoo_30s.csv')
