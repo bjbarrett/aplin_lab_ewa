@@ -11,19 +11,22 @@ unique(d$date)
 ds <- d[d$session==1 & d$date==20190815,]
 d$group_index <- as.integer(as.factor(d$group))
 plot(subject_index ~ rel_time , data=ds , col=colz[ds$tech_index] , pch=pchez[ds$open + 1] , cex=0.7)
-for(g in 1:3){
+for(g in 1:5){
   dg <- d[d$group_index==g,]
   dg$subject_index_group <- as.integer(as.factor(dg$subject))
   plot(subject_index_group ~ rel_time , data=dg , col=colz[dg$tech_index] , pch=pchez[dg$open + 1] , cex=0.5 , main=unique(dg$group))
 }
   
-for(g in 1:3){
+for(g in 1:5){
   dg <- d[d$group_index==g,]
   dg$subject_index_group <- as.integer(as.factor(dg$subject))
 
   dh <- aggregate(cbind( dg$choose_blue , dg$choose_red ) , list(date=dg$date , session=dg$session  ) , mean ) 
   dh$date_obj <- ymd(dh$date)
   dh <- dh[with(dh, order(date, session)), ]
+  
+  ge_roop <- unique(d$group[d$group_index==g])
+  pdf(file = paste0("group_session_preds_",ge_roop,".pdf") , width = 7, height = 5) # The height of the plot in inches
   
   #plot raw data
   plot(1:nrow(dh),dh$V1 , ylim=c(0,1) , col="white" , pch=19 , xaxt='n' , ylab="Prob. Choose Red" , xlab='' , main=min(dg$group))
@@ -58,7 +61,7 @@ for(g in 1:3){
   lines(1:nrow(di),di[,2+i] , ylim=c(0,1) , col="black" , pch=1 , type="l" , lty=2 , lw=3)
   lines(1:nrow(di2),di2$V1[,1] , ylim=c(0,1) , col="black" , pch=1 , type="l" , lty=3 , lw=2)
   lines(1:nrow(di2),di2$V1[,2] , ylim=c(0,1) , col="black" , pch=1 , type="l" , lty=3 , lw=2)
-  
+  dev.off()
 }
 
 
