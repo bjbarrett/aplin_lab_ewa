@@ -313,17 +313,26 @@ table( d_BA2$s_adult_red, d_BA2$age_index)
 ### count number of solves red / blue done by individuals of same roost within window
 freq_roost_red <- matrix(0,nrow=nrow(d_BA2),ncol=ncol(ps_BA)) ##sum values where we tally up ones
 freq_roost_blue <- matrix(0,nrow=nrow(d_BA2),ncol=ncol(ps_BA))
+
 d_BA2$roost <- ILV$roost[match(d_BA2$subject,ILV$id)]
+
+sum(unique(d_BA2$subject)%in%ILV$id) #245
+length(unique(d_BA2$subject)) #245
+
 roost.matrix <- matrix(0,nrow=1,ncol=ncol(ps_BA))
 colnames(roost.matrix)<- colnames(ps_BA)
+
 for (i in 1:nrow(ILV)) {
   for (j in 1:ncol(roost.matrix)) {
     if (ILV$id[i]==colnames(roost.matrix)[j]) {
       roost.matrix[1,j] <- ILV$roost[i]
     }
   }
-}
+}# 0 for individuals present but not solving (only solvers in ILV)
+# means that roost- info cannot be used for individuals that are not in ILV
+
 roost_similarity <- matrix(0,nrow=nrow(d_BA2),ncol=ncol(roost.matrix))
+
 for(i in 1:nrow(d_BA2)) {
   for (j in 1:ncol(roost.matrix)) {
     roost_similarity[i,j] <- roost.matrix[1,j]==d_BA2$roost[i]
@@ -361,7 +370,7 @@ for (nobs in 1:nrow(d_BA2)){
 #   
 # }
 
-table(d_BA2$s_male_red , d_BA2$sex_index)
-table(d_BA2$s_male_red , d_BA2$sex_index)
+table(d_BA2$s_roost_red , d_BA2$sex_index)
+table(d_BA2$s_roost_blue , d_BA2$sex_index)
 
 write.csv(df,'ALL_ROOSTS_Almonds_cockatoo_60s.csv')
