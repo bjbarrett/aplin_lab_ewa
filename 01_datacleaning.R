@@ -11,7 +11,7 @@ d_BA_to_clean$subject[d_BA_to_clean$subject=="Msmush_V_BA"]<- "Msmu_BA"
 
 d_BA <- d_BA_to_clean[which(d_BA_to_clean$subject !="Ser Onion" & d_BA_to_clean$subject !="corella"),] #correct names
 d_BA <-  d_BA[which( d_BA$subject!=""),] #drop blank individuals
-d_BA <-  d_BA[d$group=="BA",] #drop blank individuals
+#d_BA <-  d_BA[d$group=="BA",] #drop blank individuals
 str(d_BA)
 d_BA$time_hh_min[d_BA$rel.time==6928.819] <- 1602.1469833333 #1562 should be 1602
 #1562 should be 1602
@@ -364,4 +364,4 @@ for (nobs in 1:nrow(d_BA2)){
 table(d_BA2$s_male_red , d_BA2$sex_index)
 table(d_BA2$s_male_red , d_BA2$sex_index)
 
-write.csv(df,'ALL_ROOSTS_Almonds_cockatoo_60s.csv')
+write.csv(d_BA2,'ALL_ROOSTS_Almonds_cockatoo_60s.csv')

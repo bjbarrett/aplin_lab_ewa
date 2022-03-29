@@ -6,7 +6,7 @@ library('janitor')
 library('beepr')
 #assuming previous cleaning code is run, which we need to add to github
 #d <- read.csv("cockatoo_data/BA_Almonds_cockatoo_60s.csv")
-d <- read.csv("ALL_ROOSTS_Almonds_cockatoo_5min.csv")
+d <- read.csv("ALL_ROOSTS_Almonds_cockatoo_60s.csv")
 #drop the 70 obs of missing age sex class
 d <- d[which(is.na(d$age_index)==FALSE),]
 d <- d[which(is.na(d$sex_index)==FALSE),]
