@@ -2,7 +2,7 @@
 #load("/Users/bbarrett/Downloads/fit_rank_freq_60s_slu_all.rds")
 ####################individual learning
 #load("/Users/bbarrett/Downloads/ind.rds")
-load("/Users/bbarrett/Documents/bias_i_sa/ind.rds")
+load("/Users/bbarrett/Documents/bias_i_sa_60/ind.rds")
 fit_i <- stanfit
 post_ind <- extract(fit_i)
 precis(fit_i , pars="log_lambda" , depth=3)
@@ -157,7 +157,7 @@ traceplot(fit_i , pars='psi')
 
 #####################freq dep
 # load("/Users/bbarrett/Downloads/freq.rds")
-load("/Users/bbarrett/Documents/bias_i_sa/freq.rds")
+load("/Users/bbarrett/Documents/bias_i_sa_60/freq.rds")
 
 fit_freq <- stanfit
 post_freq <- extract(fit_freq)
@@ -214,7 +214,7 @@ DensSigma(post_freq$sigma_g)
 
 ################# male
 #load("/Users/bbarrett/Downloads/male_cue.rds")
-load("/Users/bbarrett/Documents/bias_i_sa/male_cue.rds")
+load("/Users/bbarrett/Documents/bias_i_sa_60/male_cue.rds")
 
 fit_male <- stanfit
 post_male <- extract(fit_male)
@@ -262,7 +262,7 @@ traceplot(fit_male , pars='betaq')
 
 #####################adult-bias
 # load("/Users/bbarrett/Downloads/adult_cue.rds")
-load("/Users/bbarrett/Documents/bias_i_sa/adult_cue.rds")
+load("/Users/bbarrett/Documents/bias_i_sa_60/adult_cue.rds")
 
 fit_adult <- stanfit
 post_adult <- extract(fit_adult)
@@ -310,7 +310,7 @@ traceplot(fit_adult , pars='betaq')
 # traceplot(fit_adult_bias , pars='betaq')
 
 #######################roost-bias
-load("/Users/bbarrett/Documents/bias_i_sa/roost_cue.rds")
+load("/Users/bbarrett/Documents/bias_i_sa_60/roost_cue.rds")
 fit_roost<- stanfit
 post_roost <- extract(fit_roost)
 str(post_roost)
@@ -398,6 +398,15 @@ traceplot(fit_rank_bias , pars='phi')
 traceplot(fit_rank_bias , pars='gamma')
 traceplot(fit_rank_bias , pars='betaq')
 
+
+#####male linear
+load("/Users/bbarrett/Downloads/male_lin.rds")
+fit_male_lin <- stanfit
+post_male_lin <- extract(fit_male_lin)
+
+DensLambda(post_male_lin)
+DensPhi(post_male_lin)
+DensGamma(post_male_lin)
 ############git freq_adult
 
 traceplot(fit_adult_freq , pars='sigma_i')
