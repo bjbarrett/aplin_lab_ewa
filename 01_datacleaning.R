@@ -23,7 +23,7 @@ d_BA$choose_blue <- ifelse(d_BA$behav1=="B" , 1, 0) #1 for red, 0 for blue
 d_BA$open <- ifelse(d_BA$behav2=="op" , 1, 0) # give a 1 to open, 0 if not
 
 #ILVba <- read.csv("C:/Users/jpenndorf/owncloud/EWA/aplin_lab_ewa/cockatoo_data/ILV_allgroups20220310.csv",row.names = 1)
-ILVba <- read.csv("cockatoo_data/ILV_allgroups20220310.csv",row.names = 1)
+ILVba <- read.csv("cockatoo_data/ILVs_20220329.csv",row.names = 1)
 
 ILVba <- clean_names(ILVba)
 ILVba$tutor_red <- 0
