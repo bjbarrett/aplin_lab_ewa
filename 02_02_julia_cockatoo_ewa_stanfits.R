@@ -6,7 +6,7 @@ library('janitor')
 library('beepr')
 #assuming previous cleaning code is run, which we need to add to github
 #d <- read.csv("cockatoo_data/BA_Almonds_cockatoo_60s.csv")
-d <- read.csv("ALL_ROOSTS_Almonds_cockatoo_30s.csv")
+d <- read.csv("ALL_ROOSTS_Almonds_cockatoo_5min.csv")
 #drop the 70 obs of missing age sex class
 d <- d[which(is.na(d$age_index)==FALSE),]
 d <- d[which(is.na(d$sex_index)==FALSE),]
@@ -29,15 +29,13 @@ for (r in 1:nrow(d)) {
 }
 beep(2)
 d$tech_index <- as.integer(as.factor(d$behav1))
-d$age_index[is.na(d$age_index)] <- 2
-d$sex_index[is.na(d$sex_index)] <- 2
-
-d$age_index <- d$age_index + 1 #1 is adult, 2 is uv, 3 is unknown
-d$sex_index <- d$sex_index + 1 #1 is female, 2 is male, 3 is unknown
+# d$age_index[is.na(d$age_index)] <- 2
+# d$sex_index[is.na(d$sex_index)] <- 2
+# 
+# d$age_index <- d$age_index + 1 #1 is adult, 2 is uv, 3 is unknown
+# d$sex_index <- d$sex_index + 1 #1 is female, 2 is male, 3 is unknown
 d$group_index  <- as.integer(as.factor(d$group))
 unique(d$subject_index)
-unique(d$subject[])
-which(d$subject)
 counts<-data.frame(table(d$subject_index))
 
 ##seed attraction scores for tutors:
@@ -49,6 +47,14 @@ d$ac_r_init[d$subject=="BNV_H_CG"] <- 1
 d$ac_b_init[d$subject=="BPO_V_BA"] <- 1
 d$ac_b_init[d$subject=="MVT_V_BA"] <- 1
 
+#turn freqs to probs
+d$n_obs_total <- d$n_obs_blue + d$n_obs_red
+d$f_obs_blue <- d$n_obs_blue/d$n_obs_total
+d$f_obs_red <- d$n_obs_red/d$n_obs_total
+is.nan.data.frame <- function(x)
+  do.call(cbind, lapply(x, is.nan))
+d$f_obs_red[is.nan(d$f_obs_red)] <- 0
+d$f_obs_blue[is.nan(d$f_obs_blue)] <- 0
 
 ### individual learning models
 datalist_i <- list(
@@ -67,6 +73,7 @@ datalist_i <- list(
   ac_init = cbind( d$ac_b_init , d$ac_r_init )
 )
 
+
 #freq dep
 datalist_s <- list(
   N = nrow(d),                            #length of dataset
@@ -74,7 +81,7 @@ datalist_s <- list(
   K = 2,         #number of processing techniques,
   tech = d$tech_index,           #technique index
   pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
-  s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J (frequency-dependence)
+  s = cbind(d$f_obs_blue,d$f_obs_red), #observed counts of all K techniques to individual J (frequency-dependence)
   bout = d$bout,
   id = d$subject_index ,                                           #individual ID
   N_effects=4,
@@ -83,10 +90,7 @@ datalist_s <- list(
   group_index=d$group_index,
   ac_init = cbind( d$ac_b_init , d$ac_r_init ),
   L = length( unique(d$group_index) )       #number of groups
-  
 )
-#scale cues by dividing by max value
-datalist_s$s <- datalist_s$s / max(datalist_s$s)
 
 ###male bias
 datalist_s_male <- list(
@@ -95,7 +99,7 @@ datalist_s_male <- list(
   K = 2,         #number of processing techniques
   tech = d$tech_index,           #technique index
   pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
-  s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J
+  s = cbind(d$f_obs_blue,d$f_obs_red), #observed counts of all K techniques to individual J
   q = cbind(d$s_male_blue,d$s_male_red), 
   bout = d$bout,
   id = d$subject_index ,                                           #individual ID
@@ -104,7 +108,7 @@ datalist_s_male <- list(
   age_index=d$age_index,
   group_index=d$group_index,
   ac_init = cbind( d$ac_b_init , d$ac_r_init ),
-  L = length( unique(d$group_index) )       #number of groups
+  L = length( unique(d$group_index) )  #number of groups
 )
 
 
@@ -119,7 +123,7 @@ datalist_s_adult <- list(
   K = 2,         #number of processing techniques
   tech = d$tech_index,           #technique index
   pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
-  s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J
+  s = cbind(d$f_obs_blue,d$f_obs_red), #observed counts of all K techniques to individual J
   q = cbind(d$s_adult_blue,d$s_adult_red), 
   bout = d$bout,
   id = d$subject_index ,                                           #individual ID
@@ -139,7 +143,7 @@ datalist_s_roost <- list(
   K = 2,         #number of processing techniques
   tech = d$tech_index,           #technique index
   pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),    #individual payoff at timestep (1 if succeed, 0 is fail)
-  s = cbind(d$n_obs_blue,d$n_obs_red), #observed counts of all K techniques to individual J
+  s = cbind(d$f_obs_blue,d$f_obs_red), #observed counts of all K techniques to individual J
   q = cbind(d$s_roost_blue,d$s_roost_red), 
   bout = d$bout,
   id = d$subject_index ,                                           #individual ID
@@ -159,8 +163,8 @@ mod <- cmdstan_model(file , cpp_options = list(stan_threads = TRUE) )
 fit_i <- mod$sample(
   data = datalist_i,
   seed = 123,
-  chains = 5,
-  parallel_chains = 5,
+  chains = 4,
+  parallel_chains = 4,
   refresh = 100,
   iter_sampling = 1000,
   iter_warmup = 1000,
@@ -168,13 +172,13 @@ fit_i <- mod$sample(
   adapt_delta = 0.9,
 )
 
-fit_i$summary( "log_lambda" )
-fit_i$summary( "logit_phi" )
-fit_i$summary( "lambda_i" )
-fit_i$summary( "phi_i" )
-fit_i$summary( "G" )
-fit_i$summary( "I" )
-fit_i$summary( "psi" )
+# fit_i$summary( "log_lambda" )
+# fit_i$summary( "logit_phi" )
+# fit_i$summary( "lambda_i" )
+# fit_i$summary( "phi_i" )
+# fit_i$summary( "G" )
+# fit_i$summary( "I" )
+# fit_i$summary( "psi" )
 
 stanfit <- rstan::read_stan_csv(fit_i$output_files())
 #post_i <- extract(stanfit)
@@ -185,31 +189,31 @@ file <- file.path("cockatoo_data/stan_code/ewa_freq2.stan")
 mod <- cmdstan_model(file , cpp_options = list(stan_threads = TRUE) )
 fit_freq <- mod$sample(
   data = datalist_s,
-  seed = 13,
-  adapt_delta = 0.999,
-  init = 0.1,
-  chains = 5,
-  parallel_chains = 5,
-  refresh = 100,
+  seed = 153,
+  adapt_delta = 0.99,
+  init = 0.01,
+  chains = 4,
+  parallel_chains = 4, 
+  refresh = 10,
   iter_sampling = 1000,
   iter_warmup = 1000,
   threads=8,
-  max_treedepth = 13
+  max_treedepth = 14
   )
 
-# draws_f <- fit_freq$draws()
- mcmc_dens(fit_i$draws(c("G")))
-# fit_freq$summary( "log_lambda" )
-# fit_freq$summary( "logit_phi" )
-# fit_freq$summary( "logit_gamma" )
-fit_freq$summary( "log_f" )
-# fit_freq$summary( "lambda_i" )
-# fit_freq$summary( "phi_i" )
+# #draws_f <- fit_freq$draws()
+# #mcmc_dens(fit_freq$draws(c("G")))
+# # fit_freq$summary( "log_lambda" )
+# # fit_freq$summary( "logit_phi" )
+# # fit_freq$summary( "logit_gamma" )
+# fit_freq$summary( "log_f" )
+# #fit_freq$summary( "lambda_i" )
+# #fit_freq$summary( "phi_i" )
 # fit_freq$summary( "fc_i" )
-# fit_freq$summary( "gamma_i" )
+# # fit_freq$summary( "gamma_i" )
 # fit_freq$summary( "G" )
-# fit_freq$summary( "psi" )
-# mcmc_trace(fit_freq, pars = "sigma_i")
+# # fit_freq$summary( "psi" )
+# # mcmc_trace(fit_freq, pars = "sigma_i")
 
 stanfit <- rstan::read_stan_csv(fit_freq$output_files())
 #post_freq <- extract(stanfit)
@@ -223,8 +227,8 @@ fit_male <- mod$sample(
   seed = 113,
   adapt_delta = 0.95,
   init = 0.1,
-  chains = 5,
-  parallel_chains = 5,
+  chains = 4,
+  parallel_chains = 4,
   refresh = 100,
   iter_sampling = 1000,
   iter_warmup = 1000,
@@ -232,17 +236,18 @@ fit_male <- mod$sample(
   max_treedepth = 12
 )
 
-fit_male$summary( "log_lambda" )
-# fit_male$summary( "logit_phi" )
+# fit_male$summary( "log_lambda" )
+# # fit_male$summary( "logit_phi" )
 # fit_male$summary( "logit_gamma" )
-# fit_male$summary( "betaq" )
-# fit_male$summary( "lambda_i" )
-# fit_male$summary( "phi_i" )
-# fit_male$summary( "gamma_i" )
-# fit_male$summary( "betaq_i" )
-# fit_male$summary( "logit_phi" )
+#  fit_male$summary( "betaq" )
+# # fit_male$summary( "lambda_i" )
+# # fit_male$summary( "phi_i" )
+# # fit_male$summary( "gamma_i" )
+# # fit_male$summary( "betaq_i" )
+# # fit_male$summary( "logit_phi" )
 
 stanfit <- rstan::read_stan_csv(fit_male$output_files())
+
 save(stanfit , file="male_cue.rds")
 
 ###adult_bias
@@ -253,8 +258,8 @@ fit_adult <- mod$sample(
   seed = 113,
   adapt_delta = 0.95,
   init = 0.1,
-  chains = 5,
-  parallel_chains = 5,
+  chains = 4,
+  parallel_chains = 4,
   refresh = 100,
   iter_sampling = 1000,
   iter_warmup = 1000,
@@ -273,8 +278,8 @@ fit_roost <- mod$sample(
   seed = 113,
   adapt_delta = 0.95,
   init = 0.1,
-  chains = 5,
-  parallel_chains = 5,
+  chains = 4,
+  parallel_chains = 4,
   refresh = 100,
   iter_sampling = 1000,
   iter_warmup = 1000,
@@ -284,8 +289,80 @@ fit_roost <- mod$sample(
 stanfit <- rstan::read_stan_csv(fit_roost$output_files())
 save(stanfit , file="roost_cue.rds")
 
+fit_roost$summary( "log_lambda" )
+# fit_male$summary( "logit_phi" )
+# fit_male$summary( "logit_gamma" )
+fit_roost$summary( "betaq" )
+# fit_male$summary( "lambda_i" )
+# fit_male$summary( "phi_i" )
+# fit_male$summary( "gamma_i" )
+fit_roost$summary( "betaq_i"  , depth=2)
+# fit_male$summary( "logit_phi" )
+plot(precis(stanfit, pars="betaq" , depth=3))
+plot(precis(stanfit, pars="betaq_i" , depth=3))
+plot(precis(stanfit, pars="I" , depth=3))
+#male proportional copying
 
+file <- file.path("cockatoo_data/stan_code/ewa_linear.stan")
+mod <- cmdstan_model(file , cpp_options = list(stan_threads = TRUE) )
+fit_male_lin <- mod$sample(
+  data = datalist_s_male,
+  seed = 113,
+  adapt_delta = 0.95,
+  init = 0.1,
+  chains = 4,
+  parallel_chains = 4,
+  refresh = 100,
+  iter_sampling = 1000,
+  iter_warmup = 1000,
+  threads=8,
+  max_treedepth = 12
+)
+
+stanfit <- rstan::read_stan_csv(fit_male_lin$output_files())
+save(stanfit , file="male_lin.rds")
+
+#adult proporional copying
+file <- file.path("cockatoo_data/stan_code/ewa_linear.stan")
+mod <- cmdstan_model(file , cpp_options = list(stan_threads = TRUE) )
+fit_adult_lin <- mod$sample(
+  data = datalist_s_adult,
+  seed = 113,
+  adapt_delta = 0.95,
+  init = 0.1,
+  chains = 4,
+  parallel_chains = 4,
+  refresh = 100,
+  iter_sampling = 1000,
+  iter_warmup = 1000,
+  threads=8,
+  max_treedepth = 12
+)
+
+stanfit <- rstan::read_stan_csv(fit_adult_lin$output_files())
+save(stanfit , file="adult_lin.rds")
 # 
+
+#roost
+file <- file.path("cockatoo_data/stan_code/ewa_linear.stan")
+mod <- cmdstan_model(file , cpp_options = list(stan_threads = TRUE) )
+fit_roost_lin <- mod$sample(
+  data = datalist_s_roost,
+  seed = 113,
+  adapt_delta = 0.95,
+  init = 0.1,
+  chains = 4,
+  parallel_chains = 4,
+  refresh = 100,
+  iter_sampling = 1000,
+  iter_warmup = 1000,
+  threads=8,
+  max_treedepth = 12
+)
+
+stanfit <- rstan::read_stan_csv(fit_roost_lin$output_files())
+save(stanfit , file="roost_lin.rds")
+
 # ###rank bias
 # datalist_s_rank <- list(
 #   N = nrow(d),                            #length of dataset
@@ -514,8 +591,8 @@ fit_freq = stan( file = 'cockatoo_data/stan_code/ewa_freq_slu.stan',
 
 fit_freq_bias = stan( file = 'cockatoo_data/stan_code/ewa_freq_slu_bias.stan', 
                  data = datalist_s ,
-                 iter = 1200, 
-                 warmup=600, 
+                 iter = 1000, 
+                 warmup=500, 
                  chains=4, 
                  cores=4, 
                  control=list(adapt_delta=0.99) , 
@@ -529,8 +606,8 @@ fit_freq_bias = stan( file = 'cockatoo_data/stan_code/ewa_freq_slu_bias.stan',
 ####male-bias
 fit_male= stan( file = 'cockatoo_data/stan_code/ewa_cue_slu.stan', 
                  data = datalist_s_male ,
-                 iter = 1200, 
-                 warmup=600, 
+                 iter = 1000, 
+                 warmup=500, 
                  chains=4, 
                  cores=4, 
                  control=list(adapt_delta=0.99) , 
