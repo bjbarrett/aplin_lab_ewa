@@ -1,7 +1,8 @@
 library(janitor)
 library(lubridate)
 library(beepr)
-library(readr)
+library(stringr)
+#library(readr)
 options(digits = 14) 
 d_BA_to_clean <- read.csv("cockatoo_data/EWA_raw_data_BA_CG_NB_MA_BG.csv") #load raw data
 
@@ -10,6 +11,10 @@ d_BA_to_clean$subject[d_BA_to_clean$subject=="Msmush_V_BA"]<- "Msmu_BA"
 
 d_BA <- d_BA_to_clean[which(d_BA_to_clean$subject !="Ser Onion" & d_BA_to_clean$subject !="corella"),] #correct names
 d_BA <-  d_BA[which( d_BA$subject!=""),] #drop blank individuals
+d_BA <-  d_BA[d$group=="BA",] #drop blank individuals
+str(d_BA)
+d_BA$time_hh_min[d_BA$rel.time==6928.819] <- 1602.1469833333 #1562 should be 1602
+#1562 should be 1602
 
 d_BA <- d_BA[order(d_BA$date,d_BA$time_hh_min),] #order by date and time
 
@@ -50,51 +55,80 @@ plot(d_BA$subject_index ~ d_BA$rel.time , col=col_pal[d_BA$choose_blue +1] , pch
 colnames(d_BA)
 ps_BA <- as.data.frame(d_BA[,11:541])
 ps_BA <- as.data.frame(ifelse( ps_BA==TRUE , 1 , 0))
+d_BA[ , c(11:541)] <- list(NULL) #drop columns with names
 nrow(ps_BA)
 nrow(d_BA)
+
 #just use social information associated with 1 in ps_BA
 d_BA$n_obs_blue <- 0
 d_BA$n_obs_red <- 0
-#d_BA[ , c(11:541)] <- list(NULL) #drop columns with names
 
 
 #unique.id <- unique(d_BA$subject)
 #present.BA.cut <- present.BA[,colnames(present.BA) %in%unique.id]
-
+sort(unique(colnames(ps_BA)))
+sort(unique(d_BA$subject))
 #for each solve
 ## define time window (previous solve or previous scan)
 ### count number of solves red / blue within window
 freq_red <- matrix(0,nrow=nrow(d_BA),ncol=ncol(ps_BA))##sum values where we tally up ones
 freq_blue <- matrix(0,nrow=nrow(d_BA),ncol=ncol(ps_BA))
+freq_red2 <- matrix(0,nrow=nrow(d_BA),ncol=ncol(ps_BA))##sum values where we tally up ones
+freq_blue2 <- matrix(0,nrow=nrow(d_BA),ncol=ncol(ps_BA))
 ILV <- ILVba[order(ILVba$id),] #order by ID_actor
 
 sort(unique(d_BA$subject)) %in% sort(unique(colnames(ps_BA)))#check to make sure all focals are in colnames
 
-for( i in 1:nrow(d_BA) ){ # creates 2 matrices, specifying if individual was present at red (freq_red) or blue (freq_blue) solve
-  for (j in 1:ncol(ps_BA)){
-    if (d_BA$subject[i] == colnames(ps_BA)[j]){     
-      freq_red[i,j] <- d_BA$choose_red[i]*ps_BA[i,j] #if tey are in ps and red is chose populate this
-      freq_blue[i,j] <- d_BA$choose_blue[i]*ps_BA[i,j]
-        }	
-    }
-}
+# for( i in 1:nrow(d_BA) ){ # creates 2 matrices, specifying if individual was present at red (freq_red) or blue (freq_blue) solve
+#   for (j in 1:ncol(ps_BA)){
+#     #if (d_BA$subject[i] == colnames(ps_BA)[j]){     
+#       freq_red[i,j] <- d_BA$choose_red[i]*ps_BA[i,j] #if tey are in ps and red is chose populate this
+#       freq_blue[i,j] <- d_BA$choose_blue[i]*ps_BA[i,j]
+#         #}	
+#     }
+# }
 
+  for (j in 1:ncol(ps_BA)){
+    freq_red[,j] <- d_BA$choose_red*ps_BA[,j] #if tey are in ps and red is chose populate this
+    freq_blue[,j] <- d_BA$choose_blue*ps_BA[,j]
+}
 beep(3)
-win_width <-5 #social info memory window in seconds (num_min*60secs) ##CHECK THIS IS IT SECONDS OR MINUITES
+
+# ifelse( sum(freq_red - freq_red2)==0 , print("huzzah, alles ist in ordnung") , print("ach nein!") )
+
+win_width <- 1*60 #social info memory window in seconds (num_min*60secs) ##CHECK THIS IS IT SECONDS OR MINUITES
 d_BA$obs_index <- seq(1:nrow(d_BA)) #unique sequential value to each row after ordering dataframe by timestamp
 ILV$ID_all_index <- as.integer(as.factor(ILV$id)) #is this still needed?
-d_BA$ID_all_index <- ILV$ID_all_index[match(d_BA$subject, ILV$id)]
-d_BA$date_time <- d_BA$date*10000 #what is d_BA$time_hh_mon ##ASK JULIA
-d_BA$date_time <- d_BA$date_time + d_BA$time_hh_min #what is d_BA$time_hh_mon ##ASK JULIA
+d_BA$ID_all_index <- ILV$ID_all_index[match(d_BA$subject, ILV$id)] #reconsider why did this
+d_BA$date_time <- d_BA$date*10000 #what is d_BA$time_hh_mon 
+d_BA$date_time <- d_BA$date_time + d_BA$time_hh_min #what is d_BA$time_hh_mon 
+# d_BA$year <- str_sub(d_BA$date_time, 1, 4)
+# d_BA$month <-str_sub(d_BA$date_time, 5, 6)
+# d_BA$day <- str_sub(d_BA$date_time, 7, 8)
+d_BA$hour <- str_sub(d_BA$date_time, 9, 10)
+d_BA$minute <- str_sub(d_BA$date_time, 11, 12)
+d_BA$second <- as.character((as.integer(str_sub(d_BA$date_time, 14, 15))/100)*60)
+
+d_BA$date <- ymd(d_BA$date)
+d_BA$hms <- hms(paste(d_BA$hour,d_BA$minute,d_BA$second))
+d_BA$real_date <- paste(d_BA$date , d_BA$hms)
+d_BA$real_date <- ymd_hms(d_BA$real_date)
+
+as.numeric(as.duration(d_BA$real_date[20] - d_BA$real_date)) <= win_width
+min (d_BA$obs_index[as.numeric(as.duration(d_BA$real_date[20] - d_BA$real_date)) <= win_width] , na.rm=TRUE)
 
 d_BA$zz <- NA
 for (nobs in 1:nrow(d_BA)){
-  d_BA$zz[nobs] <- zz <- min(d_BA$obs_index[as.numeric(as.duration(d_BA$date_time[nobs] - d_BA$date_time)) <= win_width ]) #what is minimal value or earliest observation that occured within the window width
+  d_BA$zz[nobs] <- zz <- min (d_BA$obs_index[as.numeric(as.duration(d_BA$real_date[nobs] - d_BA$real_date)) <= win_width] , na.rm=TRUE) #what is minimal value or earliest observation that occured within the window width
   # d_BA$n_obs_blue[nobs] <- sum( freq_blue[ zz : (d_BA$obs_index[nobs] - 1) , d_BA$ID_all_index[nobs] ] ) # we need to get these indives to match
   # d_BA$n_obs_red[nobs] <- sum( freq_red[ zz : (d_BA$obs_index[nobs] - 1) , d_BA$ID_all_index[nobs]] ) 
-  d_BA$n_obs_blue[nobs] <- sum( freq_blue[ zz : (d_BA$obs_index[nobs] - 1) , which(colnames(ps_BA)==d_BA$subject[nobs]) ] , na.rm = TRUE) # we need to get these indives to match
-  d_BA$n_obs_red[nobs] <- sum( freq_red[ zz : (d_BA$obs_index[nobs] - 1) , which(colnames(ps_BA)==d_BA$subject[nobs]) ] , na.rm = TRUE)
+  d_BA$n_obs_blue[nobs] <- sum( freq_blue[ zz : nobs - 1 , which(colnames(ps_BA)==d_BA$subject[nobs]) ] , na.rm = TRUE) # we need to get these indives to match
+  d_BA$n_obs_red[nobs] <- sum( freq_red[ zz : nobs - 1 , which(colnames(ps_BA)==d_BA$subject[nobs]) ] , na.rm = TRUE)
 }
+
+table(d_BA$n_obs_blue)
+table(d_BA$n_obs_red)
+
 
 #get rid of NaNs and make value zero so it does not affect behavior
 d_BA2 <- d_BA
@@ -150,21 +184,24 @@ table(d_BA2$n_obs_red , d_BA2$sex , useNA = "ifany")
 freq_male_red <- matrix(0,nrow=nrow(d_BA2),ncol=ncol(ps_BA))##sum values where we tally up ones
 freq_male_blue <- matrix(0,nrow=nrow(d_BA2),ncol=ncol(ps_BA))
 ILV <- ILVba[order(ILVba$id),] #order by ID_actor 
-for( i in 1:nrow(d_BA2) ){ # creates 2 matrices, specifying if individual was present at red (freq_red) or blue (freq_blue) solve
-  for (j in 1:ncol(ps_BA)){
-    if (d_BA2$subject[i] == colnames(ps_BA)[j] ){     
-      freq_male_red[i,j] <- as.numeric(d_BA2$choose_red[i])*as.numeric(ps_BA[i,j])*as.numeric(d_BA2$sex_index[i])
-      freq_male_blue[i,j] <- as.numeric(d_BA2$choose_blue[i])*as.numeric(ps_BA[i,j])*as.numeric(d_BA2$sex_index[i])
-    }	
-  }
-}
 
+
+for (j in 1:ncol(ps_BA)){
+  freq_male_red[,j] <- d_BA$choose_red*ps_BA[,j]*d_BA2$male #if tey are in ps and red is chose populate this
+  freq_male_blue[,j] <- d_BA$choose_blue*ps_BA[,j]*d_BA2$male
+}
 
 for (nobs in 1:nrow(d_BA2)){
-  zz <- min(d_BA2$obs_index[as.numeric(as.duration(d_BA2$date_time[nobs] - d_BA2$date_time)) <= win_width ]) #what is minimal value or earliest observation of males that occured within the window width
-  d_BA2$s_male_red[nobs] <- sum( freq_male_red[ zz : (d_BA2$obs_index[nobs] - 1) , d_BA2$ID_all_index[nobs] ] )
-  d_BA2$s_male_blue[nobs] <- sum( freq_male_blue[ zz : (d_BA2$obs_index[nobs] - 1) , d_BA2$ID_all_index[nobs] ]) 
+  zz <- d_BA2$zz[nobs]
+  d_BA2$s_male_blue[nobs] <- sum( freq_male_blue[ zz : nobs - 1 , which(colnames(ps_BA)==d_BA2$subject[nobs]) ] , na.rm = TRUE)
+  d_BA2$s_male_red[nobs] <- sum( freq_male_red[ zz : nobs - 1 , which(colnames(ps_BA)==d_BA2$subject[nobs]) ] , na.rm = TRUE)
 }
+
+# for (nobs in 1:nrow(d_BA2)){
+#   zz <- min(d_BA2$obs_index[as.numeric(as.duration(d_BA2$date_time[nobs] - d_BA2$date_time)) <= win_width ]) #what is minimal value or earliest observation of males that occured within the window width
+#   d_BA2$s_male_red[nobs] <- sum( freq_male_red[ zz : (d_BA2$obs_index[nobs] - 1) , d_BA2$ID_all_index[nobs] ] )
+#   d_BA2$s_male_blue[nobs] <- sum( freq_male_blue[ zz : (d_BA2$obs_index[nobs] - 1) , d_BA2$ID_all_index[nobs] ]) 
+# }
 
 table( d_BA2$n_obs_blue, d_BA2$sex_index)
 table( d_BA2$n_obs_red, d_BA2$sex_index)
@@ -175,22 +212,23 @@ table( d_BA2$s_male_red, d_BA2$sex_index)
 ### count number of solves red / blue done by adults within window
 freq_adult_red <- matrix(0,nrow=nrow(d_BA2),ncol=ncol(ps_BA)) ##sum values where we tally up ones
 freq_adult_blue <- matrix(0,nrow=nrow(d_BA2),ncol=ncol(ps_BA))
-for( i in 1:nrow(d_BA2) ){ # creates 2 matrices, specifying if individual was present at red (freq_red) or blue (freq_blue) solve
-  for (j in 1:ncol(ps_BA)){
-    if (d_BA2$subject[i] == colnames(ps_BA)[j] ){     
-      freq_adult_red[i,j] <- as.numeric(d_BA2$choose_red[i])*as.numeric(ps_BA[i,j])*as.numeric(d_BA2$age_index[i])
-      freq_adult_blue[i,j] <- as.numeric(d_BA2$choose_blue[i])*as.numeric(ps_BA[i,j])*as.numeric(d_BA2$age_index[i])
-    }	
-  }
-}
 
+
+for (j in 1:ncol(ps_BA)){
+  freq_adult_red[,j] <- d_BA2$choose_red*ps_BA[,j]*d_BA2$adult #if tey are in ps and red is chose populate this
+  freq_adult_blue[,j] <- d_BA2$choose_blue*ps_BA[,j]*d_BA2$adult
+}
 
 for (nobs in 1:nrow(d_BA2)){
-  zz <- min(d_BA2$obs_index[as.numeric(as.duration(d_BA2$date_time[nobs] - d_BA2$date_time)) <= win_width ]) #what is minimal value or earliest observation of males that occured within the window width
-  
-  d_BA2$s_adult_red[nobs] <- sum( freq_adult_red[ zz : (d_BA2$obs_index[nobs] - 1) , d_BA2$ID_all_index[nobs] ] )
-  d_BA2$s_adult_blue[nobs] <- sum( freq_adult_blue[ zz : (d_BA2$obs_index[nobs] - 1) , d_BA2$ID_all_index[nobs] ]) 
+  zz <- d_BA2$zz[nobs]
+  d_BA2$s_adult_blue[nobs] <- sum( freq_adult_blue[ zz : nobs - 1 , which(colnames(ps_BA)==d_BA2$subject[nobs]) ] , na.rm = TRUE)
+  d_BA2$s_adult_red[nobs] <- sum( freq_adult_red[ zz : nobs - 1 , which(colnames(ps_BA)==d_BA2$subject[nobs]) ] , na.rm = TRUE)
 }
+
+table( d_BA2$n_obs_blue, d_BA2$age_index)
+table( d_BA2$n_obs_red, d_BA2$age_index)
+table( d_BA2$s_adult_blue, d_BA2$age_index)
+table( d_BA2$s_adult_red, d_BA2$age_index)
 
 # 
 # #### solves of higher ranking individuals  witnessed
@@ -292,26 +330,38 @@ for(i in 1:nrow(d_BA2)) {
   }
 }
 roost_similarity[is.na(roost_similarity)] <- FALSE #NAs due to individuals of unknown roosting location
+
 ## roost similarity: binary, whether observing individual is from same roost than solver
 ## does not take into account whether they are solving at their roost, or just visiting this particular roost for a day
-for( i in 1:nrow(d_BA2) ){ # creates 2 matrices, specifying if individual was present at red (freq_red) or blue (freq_blue) solve
-  for (j in 1:ncol(ps_BA)){
-    if (d_BA2$subject[i] == colnames(ps_BA)[j]){     
-      freq_roost_red[i,j] <- as.numeric(d_BA2$choose_red[i])*as.numeric(ps_BA[i,j])*as.numeric(roost_similarity[i,j])
-      freq_roost_blue[i,j] <- as.numeric(d_BA2$choose_blue[i])*as.numeric(ps_BA[i,j])*as.numeric(roost_similarity[i,j])
-    }	
-  }
+for (j in 1:ncol(ps_BA)){
+  freq_roost_red[,j] <- d_BA2$choose_red*ps_BA[,j]*roost_similarity[,j] #if tey are in ps and red is chose populate this
+  freq_roost_blue[,j] <- d_BA2$choose_blue*ps_BA[,j]*roost_similarity[,j]
 }
 
 for (nobs in 1:nrow(d_BA2)){
-  zz <- min(d_BA2$obs_index[as.numeric(as.duration(d_BA2$date_time[nobs] - d_BA2$date_time)) <= win_width ]) #what is minimal value or earliest observation of males that occured within the window width
-  
-  d_BA2$s_roost_red[nobs] <- sum( freq_roost_red[ zz : (d_BA2$obs_index[nobs] - 1) , d_BA2$ID_all_index[nobs] ] )
-  d_BA2$s_roost_blue[nobs] <- sum( freq_roost_blue[ zz : (d_BA2$obs_index[nobs] - 1) , d_BA2$ID_all_index[nobs] ]) 
-  
+  zz <- d_BA2$zz[nobs]
+  d_BA2$s_roost_blue[nobs] <- sum( freq_roost_blue[ zz : nobs - 1 , which(colnames(ps_BA)==d_BA2$subject[nobs]) ] , na.rm = TRUE)
+  d_BA2$s_roost_red[nobs] <- sum( freq_roost_red[ zz : nobs - 1 , which(colnames(ps_BA)==d_BA2$subject[nobs]) ] , na.rm = TRUE)
 }
+# 
+# for( i in 1:nrow(d_BA2) ){ # creates 2 matrices, specifying if individual was present at red (freq_red) or blue (freq_blue) solve
+#   for (j in 1:ncol(ps_BA)){
+#     if (d_BA2$subject[i] == colnames(ps_BA)[j]){     
+#       freq_roost_red[i,j] <- as.numeric(d_BA2$choose_red[i])*as.numeric(ps_BA[i,j])*as.numeric(roost_similarity[i,j])
+#       freq_roost_blue[i,j] <- as.numeric(d_BA2$choose_blue[i])*as.numeric(ps_BA[i,j])*as.numeric(roost_similarity[i,j])
+#     }	
+#   }
+# }
+# 
+# for (nobs in 1:nrow(d_BA2)){
+#   zz <- min(d_BA2$obs_index[as.numeric(as.duration(d_BA2$date_time[nobs] - d_BA2$date_time)) <= win_width ]) #what is minimal value or earliest observation of males that occured within the window width
+#   
+#   d_BA2$s_roost_red[nobs] <- sum( freq_roost_red[ zz : (d_BA2$obs_index[nobs] - 1) , d_BA2$ID_all_index[nobs] ] )
+#   d_BA2$s_roost_blue[nobs] <- sum( freq_roost_blue[ zz : (d_BA2$obs_index[nobs] - 1) , d_BA2$ID_all_index[nobs] ]) 
+#   
+# }
 
 table(d_BA2$s_male_red , d_BA2$sex_index)
 table(d_BA2$s_male_red , d_BA2$sex_index)
 
-write.csv(df,'ALL_ROOSTS_Almonds_cockatoo_5min.csv')
+write.csv(df,'ALL_ROOSTS_Almonds_cockatoo_60s.csv')
