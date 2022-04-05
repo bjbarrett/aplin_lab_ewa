@@ -96,7 +96,7 @@ beep(3)
 
 # ifelse( sum(freq_red - freq_red2)==0 , print("huzzah, alles ist in ordnung") , print("ach nein!") )
 
-win_width <- 1*60 #social info memory window in seconds (num_min*60secs) ##CHECK THIS IS IT SECONDS OR MINUITES
+win_width <- 0.5*60 #social info memory window in seconds (num_min*60secs) ##CHECK THIS IS IT SECONDS OR MINUITES
 d_BA$obs_index <- seq(1:nrow(d_BA)) #unique sequential value to each row after ordering dataframe by timestamp
 ILV$ID_all_index <- as.integer(as.factor(ILV$id)) #is this still needed?
 d_BA$ID_all_index <- ILV$ID_all_index[match(d_BA$subject, ILV$id)] #reconsider why did this
@@ -108,6 +108,7 @@ d_BA$date_time <- d_BA$date_time + d_BA$time_hh_min #what is d_BA$time_hh_mon
 d_BA$hour <- str_sub(d_BA$date_time, 9, 10)
 d_BA$minute <- str_sub(d_BA$date_time, 11, 12)
 d_BA$second <- as.character((as.integer(str_sub(d_BA$date_time, 14, 15))/100)*60)
+d_BA$second[which(is.na(d_BA$second))] <- "0.1"
 
 d_BA$date <- ymd(d_BA$date)
 d_BA$hms <- hms(paste(d_BA$hour,d_BA$minute,d_BA$second))
@@ -373,4 +374,4 @@ for (nobs in 1:nrow(d_BA2)){
 table(d_BA2$s_roost_red , d_BA2$sex_index)
 table(d_BA2$s_roost_blue , d_BA2$sex_index)
 
-write.csv(d_BA2,'ALL_ROOSTS_Almonds_cockatoo_60s.csv')
+write.csv(d_BA2,'ALL_ROOSTS_Almonds_cockatoo_30s.csv')

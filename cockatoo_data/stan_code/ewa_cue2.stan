@@ -86,7 +86,7 @@ model {
         logPrA = lambda*AC[tech[i]] - log_sum_exp( lambda*AC );
         
         //social learning below
-        if (sum( s[i] ) > 0 ) { // only socially learn if there is social info
+        if (sum( q[i] ) > 0 ) { // only socially learn if there is social info
                 for ( j in 2:K ) {
                     lin_mod[j] = exp( Betaq*q[i,j]);                 // compute non-frequency cue as log-linear model
                 }
@@ -143,7 +143,7 @@ generated quantities{
         logPrA = lambda_i[id[i]]*AC[tech[i]] - log_sum_exp( lambda_i[id[i]]*AC );
 
         //only socially learn if there is social info
-             if (sum( s[i] ) > 0 ) {
+             if (sum( q[i] ) > 0 ) {
                 // compute non-frequency cues as log-linear model
                 for ( j in 2:K ) {
                     lin_mod[j] = exp( betaq_i[id[i]]*q[i,j]);
