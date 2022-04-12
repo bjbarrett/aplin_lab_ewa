@@ -1,14 +1,54 @@
 source()
 #load model outpout
 #load("/Users/bbarrett/Downloads/fit_rank_freq_60s_slu_all.rds")
-####################individual learning
-#load("/Users/bbarrett/Downloads/ind.rds")
 load("/Users/bbarrett/Documents/bias_i_sa_60/ind.rds")
 fit_i <- stanfit
 post_ind <- extract(fit_i)
 
+load("/Users/bbarrett/Documents/bias_i_sa_60/freq.rds")
+fit_freq <- stanfit
+post_freq <- extract(fit_freq)
+
+load("/Users/bbarrett/Documents/bias_i_sa_60/male_cue.rds")
+fit_male <- stanfit
+post_male <- extract(fit_male)
+
+load("/Users/bbarrett/Documents/bias_i_sa_60/adult_cue.rds")
+fit_adult <- stanfit
+post_adult <- extract(fit_adult)
+
+load("/Users/bbarrett/Documents/bias_i_sa_60/roost_cue.rds")
+fit_roost<- stanfit
+post_roost <- extract(fit_roost)
+
+load("/Users/bbarrett/Documents/bias_i_sa_60/male_lin.rds")
+fit_male_lin <- stanfit
+post_male_lin <- extract(fit_male_lin)
+
+load("/Users/bbarrett/Documents/bias_i_sa_60/adult_lin.rds")
+fit_adult_lin <- stanfit
+post_adult_lin <- extract(fit_adult_lin)
+
+
+####################individual learning
+#load("/Users/bbarrett/Downloads/ind.rds")
+
+
 DensLambda(post_ind)
 DensLambda(post_ind , individual=TRUE , age_sex = FALSE)
+z <- precis(fit_i , pars="log_lambda" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+DensPhi(post_ind)
+DensPhi(post_ind , individual=TRUE , age_sex = FALSE)
+z <- precis(fit_i , pars="logit_phi" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+plot(precis(fit_i , pars="sigma_i" , depth=3))
+plot(precis(fit_i , pars="Rho_i" , depth=3))
+
 #DensLambda(post_ind , prior=FALSE , group=TRUE , age_sex = FALSE)
 
 
@@ -38,9 +78,7 @@ DensSigma(post_ind$sigma_i , maintext = "Sigma Individuals")
 # traceplot(fit_i , pars='psi')
 
 #####################freq dep
-load("/Users/bbarrett/Documents/bias_i_sa_60/freq.rds")
-fit_freq <- stanfit
-post_freq <- extract(fit_freq)
+
 
 # precis(fit_freq)
 # precis(fit_freq , pars='lambda_i' , depth=2)
@@ -73,9 +111,7 @@ DensSigma(post_freq$sigma_g)
 
 ################# male
 #load("/Users/bbarrett/Downloads/male_cue.rds")
-load("/Users/bbarrett/Documents/bias_i_sa_60/male_cue.rds")
-fit_male <- stanfit
-post_male <- extract(fit_male)
+
 
 DensLambda(post_male)
 DensLambda(post_male , prior=FALSE , individual=TRUE , age_sex=FALSE)
@@ -111,9 +147,7 @@ traceplot(fit_male , pars='gamma')
 traceplot(fit_male , pars='betaq')
 
 #####################adult-bias
-load("/Users/bbarrett/Documents/bias_i_sa_60/adult_cue.rds")
-fit_adult <- stanfit
-post_adult <- extract(fit_adult)
+
 
 precis(fit_adult)
 precis(fit_adult , pars='lambda_i' , depth=2)
@@ -157,9 +191,7 @@ traceplot(fit_adult , pars='betaq')
 # traceplot(fit_adult_bias , pars='betaq')
 
 #######################roost-bias
-load("/Users/bbarrett/Documents/bias_i_sa_60/roost_cue.rds")
-fit_roost<- stanfit
-post_roost <- extract(fit_roost)
+
 str(post_roost)
 
 precis(fit_roost , pars=c('lambda' , 'phi' , 'gamma' , 'betaq'))
@@ -247,18 +279,13 @@ traceplot(fit_rank_bias , pars='betaq')
 
 
 #####male linear
-load("/Users/bbarrett/Documents/bias_i_sa_60/male_lin.rds")
-fit_male_lin <- stanfit
-post_male_lin <- extract(fit_male_lin)
+
 
 DensLambda(post_male_lin)
 DensPhi(post_male_lin)
 DensGamma(post_male_lin)
 
 #####adult linear
-load("/Users/bbarrett/Documents/bias_i_sa_60/adult_lin.rds")
-fit_adult_lin <- stanfit
-post_adult_lin <- extract(fit_adult_lin)
 
 DensLambda(post_adult_lin)
 DensPhi(post_adult_lin)
@@ -280,4 +307,6 @@ compare(fit_i , fit_freq, fit_male_lin,fit_adult_lin)
 WAICtab <- compare(fit_i , fit_freq, fit_male , fit_adult , fit_roost ,fit_i_bias , fit_freq_bias, fit_male_bias , fit_adult_bias , fit_roost_bias)
 
 
+DensLambda(post_freq , unknown=TRUE)
+DensLambda(post_freq , unknown=FALSE)
 

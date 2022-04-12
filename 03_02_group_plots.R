@@ -5,7 +5,7 @@ library(lubridate)
 # par(mar = c(4, 4, 2, .1), oma = c(.1, .1 , .1, .1))
 #model <- fit_male
 #plot(precis(model , pars=c('lambda' , 'phi' , 'gamma' , 'betaq')) , main=paste(model))
-
+colz <- c("blue","red")
 unique(d$session)
 unique(d$date)
 ds <- d[d$session==1 & d$date==20190815,]
@@ -26,7 +26,7 @@ for(g in 1:5){
   dh <- dh[with(dh, order(date, session)), ]
   
   ge_roop <- unique(d$group[d$group_index==g])
-  pdf(file = paste0("group_session_preds_",ge_roop,".pdf") , width = 7, height = 5) # The height of the plot in inches
+  pdf(file = paste0("group_session_preds_60",ge_roop,".pdf") , width = 7, height = 5) # The height of the plot in inches
   
   #plot raw data
   plot(1:nrow(dh),dh$V1 , ylim=c(0,1) , col="white" , pch=19 , xaxt='n' , ylab="Prob. Choose Red" , xlab='' , main=min(dg$group))
@@ -58,7 +58,7 @@ for(g in 1:5){
   #plot the freq model
   lines(1:nrow(dh),dh$V2 , ylim=c(0,1) , col="red" , pch=19 , type="b" , lw=3)
   i <- 1
-  lines(1:nrow(di),di[,2+i] , ylim=c(0,1) , col="black" , pch=1 , type="l" , lty=2 , lw=3)
+  lines(1:nrow(di),di[,2+i] , ylim=c(0,1) , col="black" , pch=19 , type="l" , lty=3 , lw=3)
   lines(1:nrow(di2),di2$V1[,1] , ylim=c(0,1) , col="black" , pch=1 , type="l" , lty=3 , lw=2)
   lines(1:nrow(di2),di2$V1[,2] , ylim=c(0,1) , col="black" , pch=1 , type="l" , lty=3 , lw=2)
   dev.off()
@@ -96,4 +96,3 @@ lines(1:nrow(di2),di2$V1[,2] , ylim=c(0,1) , col="darkred" , pch=1 , type="l" , 
 
 
 legend("bottomleft" , fill=col_strat , legend=c("IL" , "FDSL" , "MaleBSL" , "AdultBSL" , "RoostBSL" , "RankBSL") , bty='n' , cex=0.5 )
-
