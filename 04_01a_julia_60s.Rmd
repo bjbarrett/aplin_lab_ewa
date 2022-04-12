@@ -1,0 +1,339 @@
+---
+title: "03_04_results_julia"
+author: "Brendan Barrett"
+date: "4/5/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(rethinking)
+library(RColorBrewer)
+library(stringi)
+source("02_01_plot_fcns.R")
+
+
+
+```
+## Individual Learning
+Lets look at individual learning, not much to write home about here. 
+We cannot estimate a ton of variation in \phi as they are almost always successful.
+```{r il}
+load("/Users/bbarrett/Documents/bias_i_sa_60/ind.rds")
+fit_i <- stanfit
+post_ind <- extract(fit_i)
+
+precis(fit_i , pars=c("log_lambda","logit_phi") , depth=3)
+
+DensLambda(post_ind)
+
+DensLambda(post_ind , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_i , pars="log_lambda" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+DensPhi(post_ind)
+
+DensPhi(post_ind , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_i , pars="logit_phi" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+plot(precis(fit_i , pars="sigma_i" , depth=3))
+
+plot(precis(fit_i , pars="Rho_i" , depth=3))
+```
+
+## Frequency Dependent Social Learning
+```{r fdsll}
+load("/Users/bbarrett/Documents/bias_i_sa_60/freq.rds")
+fit_freq <- stanfit
+post_freq <- extract(fit_freq)
+
+precis(fit_freq , pars=c("log_lambda","logit_phi","logit_gamma" , "log_f") , depth=3)
+
+#lambda
+DensLambda(post_freq)
+
+DensLambda(post_freq , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_freq , pars="log_lambda" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#phi
+DensPhi(post_freq)
+
+DensPhi(post_freq , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_freq , pars="logit_phi" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#gamma
+DensGamma(post_freq)
+
+DensGamma(post_freq , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_freq , pars="logit_gamma" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#fc
+DensFc(post_freq)
+
+DensFc(post_freq , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_freq , pars="log_f" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#vcov stuff
+plot(precis(fit_freq , pars="sigma_i" , depth=3))
+
+plot(precis(fit_freq , pars="Rho_i" , depth=3))
+```
+## Male Biased Linear Social Learning
+
+```{r mblsl}
+load("/Users/bbarrett/Documents/bias_i_sa_60/male_lin.rds")
+fit_male_lin <- stanfit
+post_male_lin <- extract(fit_male_lin)
+
+precis(fit_male_lin  , pars=c("log_lambda","logit_phi","logit_gamma") , depth=3)
+
+#lambda
+DensLambda(post_male_lin )
+
+DensLambda(post_male_lin  , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_male_lin  , pars="log_lambda" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#phi
+DensPhi(post_male_lin )
+
+DensPhi(post_male_lin  , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_male_lin  , pars="logit_phi" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#gamma
+DensGamma(post_male_lin )
+
+DensGamma(post_male_lin  , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_male_lin  , pars="logit_gamma" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#vcov stuff
+plot(precis(fit_male_lin  , pars="sigma_i" , depth=3))
+
+plot(precis(fit_male_lin  , pars="Rho_i" , depth=3))
+```
+
+## Adult-biased Linear social learning
+
+```{r ablsl}
+load("/Users/bbarrett/Documents/bias_i_sa_60/adult_lin.rds")
+fit_adult_lin <- stanfit
+post_adult_lin <- extract(fit_adult_lin)
+
+precis(fit_adult_lin  , pars=c("log_lambda","logit_phi","logit_gamma") , depth=3)
+
+#lambda
+DensLambda(post_adult_lin )
+
+DensLambda(post_adult_lin  , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_adult_lin  , pars="log_lambda" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#phi
+DensPhi(post_adult_lin )
+
+DensPhi(post_adult_lin  , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_adult_lin  , pars="logit_phi" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#gamma
+DensGamma(post_adult_lin )
+
+DensGamma(post_adult_lin  , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_adult_lin  , pars="logit_gamma" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#vcov stuff
+plot(precis(fit_adult_lin  , pars="sigma_i" , depth=3))
+
+plot(precis(fit_adult_lin  , pars="Rho_i" , depth=3))
+```
+
+## Roost-biased social learning
+```{r roostb sl}
+load("/Users/bbarrett/Documents/bias_i_sa_60/roost_cue.rds")
+fit_roost<- stanfit
+post_roost <- extract(fit_roost)
+
+
+precis(fit_roost , pars=c("log_lambda","logit_phi","logit_gamma" , "betaq") , depth=3)
+
+#lambda
+DensLambda(post_roost)
+
+DensLambda(post_roost , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_roost , pars="log_lambda" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#phi
+DensPhi(post_roost)
+
+DensPhi(post_roost , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_roost , pars="logit_phi" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#gamma
+DensGamma(post_roost)
+
+DensGamma(post_roost , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_roost , pars="logit_gamma" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#fc
+DensBetaq(post_roost)
+
+DensBetaq(post_roost , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_roost , pars="betaq" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#vcov stuff
+plot(precis(fit_roost , pars="sigma_i" , depth=3))
+
+plot(precis(fit_roost , pars="Rho_i" , depth=3))
+```
+
+## Male-biased social learning
+```{r  male b sl}
+load("/Users/bbarrett/Documents/bias_i_sa_60/male_cue.rds")
+fit_male <- stanfit
+post_male <- extract(fit_male)
+
+precis(fit_male , pars=c("log_lambda","logit_phi","logit_gamma" , "betaq") , depth=3)
+
+#lambda
+DensLambda(post_male)
+
+DensLambda(post_male , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_male , pars="log_lambda" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#phi
+DensPhi(post_male)
+
+DensPhi(post_male , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_male , pars="logit_phi" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#gamma
+DensGamma(post_male)
+
+DensGamma(post_male , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_male , pars="logit_gamma" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#fc
+DensBetaq(post_male)
+
+DensBetaq(post_male , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_male , pars="betaq" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#vcov stuff
+plot(precis(fit_male , pars="sigma_i" , depth=3))
+
+plot(precis(fit_male , pars="Rho_i" , depth=3))
+```
+
+#Adult-biased social learning
+
+```{r  adult b sl}
+load("/Users/bbarrett/Documents/bias_i_sa_60/adult_cue.rds")
+fit_adult <- stanfit
+post_adult <- extract(fit_adult)
+
+precis(fit_adult , pars=c("log_lambda","logit_phi","logit_gamma" , "betaq") , depth=3)
+
+#lambda
+DensLambda(post_adult)
+
+DensLambda(post_adult , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_adult , pars="log_lambda" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#phi
+DensPhi(post_adult)
+
+DensPhi(post_adult , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_adult , pars="logit_phi" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#gamma
+DensGamma(post_adult)
+
+DensGamma(post_adult , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_adult , pars="logit_gamma" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#fc
+DensBetaq(post_adult)
+
+DensBetaq(post_adult , individual=TRUE , age_sex = FALSE)
+
+z <- precis(fit_adult , pars="betaq" , depth=3)
+z@row.names <- PlotRenameAgeSex(z@row.names)
+plot(z)
+
+#vcov stuff
+plot(precis(fit_adult , pars="sigma_i" , depth=3))
+
+plot(precis(fit_adult , pars="Rho_i" , depth=3))
+```
+
+## Information Criteria
+First we can make table of Information Criteria. These should not be treated as truth, but can be informative of general performance. We should evaluate model prediction and compare parameter predictions across models.
+```{r waictab}
+waic_tab <- compare(fit_i , fit_freq, fit_male , fit_adult , fit_roost , fit_male_lin , fit_adult_lin)
+waic_tab
+```
