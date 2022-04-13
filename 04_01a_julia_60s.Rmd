@@ -1,5 +1,5 @@
 ---
-title: "03_04_results_julia"
+title: "03_04_results_julia_60s"
 author: "Brendan Barrett"
 date: "4/5/2022"
 output: html_document
@@ -19,7 +19,7 @@ source("02_01_plot_fcns.R")
 Lets look at individual learning, not much to write home about here. 
 We cannot estimate a ton of variation in \phi as they are almost always successful.
 ```{r il}
-load("/Users/bbarrett/Documents/bias_i_sa_60/ind.rds")
+load("~/Documents/bias_i_sa_60/ind.rds")
 fit_i <- stanfit
 post_ind <- extract(fit_i)
 
@@ -48,7 +48,7 @@ plot(precis(fit_i , pars="Rho_i" , depth=3))
 
 ## Frequency Dependent Social Learning
 ```{r fdsll}
-load("/Users/bbarrett/Documents/bias_i_sa_60/freq.rds")
+load("~/Documents/bias_i_sa_60/freq.rds")
 fit_freq <- stanfit
 post_freq <- extract(fit_freq)
 
@@ -98,7 +98,7 @@ plot(precis(fit_freq , pars="Rho_i" , depth=3))
 ## Male Biased Linear Social Learning
 
 ```{r mblsl}
-load("/Users/bbarrett/Documents/bias_i_sa_60/male_lin.rds")
+load("~/Documents/bias_i_sa_60/male_lin.rds")
 fit_male_lin <- stanfit
 post_male_lin <- extract(fit_male_lin)
 
@@ -140,7 +140,7 @@ plot(precis(fit_male_lin  , pars="Rho_i" , depth=3))
 ## Adult-biased Linear social learning
 
 ```{r ablsl}
-load("/Users/bbarrett/Documents/bias_i_sa_60/adult_lin.rds")
+load("~/Documents/bias_i_sa_60/adult_lin.rds")
 fit_adult_lin <- stanfit
 post_adult_lin <- extract(fit_adult_lin)
 
@@ -181,7 +181,7 @@ plot(precis(fit_adult_lin  , pars="Rho_i" , depth=3))
 
 ## Roost-biased social learning
 ```{r roostb sl}
-load("/Users/bbarrett/Documents/bias_i_sa_60/roost_cue.rds")
+load("~/Documents/bias_i_sa_60/roost_cue.rds")
 fit_roost<- stanfit
 post_roost <- extract(fit_roost)
 
@@ -232,7 +232,7 @@ plot(precis(fit_roost , pars="Rho_i" , depth=3))
 
 ## Male-biased social learning
 ```{r  male b sl}
-load("/Users/bbarrett/Documents/bias_i_sa_60/male_cue.rds")
+load("~/Documents/bias_i_sa_60/male_cue.rds")
 fit_male <- stanfit
 post_male <- extract(fit_male)
 
@@ -283,7 +283,7 @@ plot(precis(fit_male , pars="Rho_i" , depth=3))
 #Adult-biased social learning
 
 ```{r  adult b sl}
-load("/Users/bbarrett/Documents/bias_i_sa_60/adult_cue.rds")
+load("~/Documents/bias_i_sa_60/adult_cue.rds")
 fit_adult <- stanfit
 post_adult <- extract(fit_adult)
 

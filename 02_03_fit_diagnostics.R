@@ -1,31 +1,31 @@
 source()
 #load model outpout
 #load("/Users/bbarrett/Downloads/fit_rank_freq_60s_slu_all.rds")
-load("/Users/bbarrett/Documents/bias_i_sa_60/ind.rds")
+load("~/Documents/bias_i_sa_60/ind.rds")
 fit_i <- stanfit
 post_ind <- extract(fit_i)
 
-load("/Users/bbarrett/Documents/bias_i_sa_60/freq.rds")
+load("~/Documents/bias_i_sa_60/freq.rds")
 fit_freq <- stanfit
 post_freq <- extract(fit_freq)
 
-load("/Users/bbarrett/Documents/bias_i_sa_60/male_cue.rds")
+load("~/Documents/bias_i_sa_60/male_cue.rds")
 fit_male <- stanfit
 post_male <- extract(fit_male)
 
-load("/Users/bbarrett/Documents/bias_i_sa_60/adult_cue.rds")
+load("~/Documents/bias_i_sa_60/adult_cue.rds")
 fit_adult <- stanfit
 post_adult <- extract(fit_adult)
 
-load("/Users/bbarrett/Documents/bias_i_sa_60/roost_cue.rds")
+load("~/Documents/bias_i_sa_60/roost_cue.rds")
 fit_roost<- stanfit
 post_roost <- extract(fit_roost)
 
-load("/Users/bbarrett/Documents/bias_i_sa_60/male_lin.rds")
+load("~/Documents/bias_i_sa_60/male_lin.rds")
 fit_male_lin <- stanfit
 post_male_lin <- extract(fit_male_lin)
 
-load("/Users/bbarrett/Documents/bias_i_sa_60/adult_lin.rds")
+load("~/Documents/bias_i_sa_60/adult_lin.rds")
 fit_adult_lin <- stanfit
 post_adult_lin <- extract(fit_adult_lin)
 
