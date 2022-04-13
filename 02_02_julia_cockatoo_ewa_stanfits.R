@@ -5,7 +5,7 @@ options(mc.cores=32)
 
 #assuming previous cleaning code is run, which we need to add to github
 #d <- read.csv("cockatoo_data/BA_Almonds_cockatoo_60s.csv")
-d <- read.csv("ALL_ROOSTS_Almonds_cockatoo_60s.csv")
+d <- read.csv("ALL_ROOSTS_Almonds_cockatoo_30s.csv")
 
 
 ### individual learning models

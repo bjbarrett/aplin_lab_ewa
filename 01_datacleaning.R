@@ -88,7 +88,7 @@ beep(3)
 
 # ifelse( sum(freq_red - freq_red2)==0 , print("huzzah, alles ist in ordnung") , print("ach nein!") )
 
-win_width <- 1*60 #social info memory window in seconds (num_min*60secs) ##CHECK THIS IS IT SECONDS OR MINUITES
+win_width <- 0.5*60 #social info memory window in seconds (num_min*60secs) ##CHECK THIS IS IT SECONDS OR MINUITES
 d_BA$obs_index <- seq(1:nrow(d_BA)) #unique sequential value to each row after ordering dataframe by timestamp
 ILV$ID_all_index <- as.integer(as.factor(ILV$id)) #is this still needed?
 d_BA$ID_all_index <- ILV$ID_all_index[match(d_BA$subject, ILV$id)] #reconsider why did this
@@ -395,7 +395,7 @@ is.nan.data.frame <- function(x)
 d$f_obs_red[is.nan(d$f_obs_red)] <- 0
 d$f_obs_blue[is.nan(d$f_obs_blue)] <- 0
 
-write.csv(d,'ALL_ROOSTS_Almonds_cockatoo_60s.csv')
+write.csv(d,'ALL_ROOSTS_Almonds_cockatoo_30s.csv')
 
 # 
 # ####subsetz
