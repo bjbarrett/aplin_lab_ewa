@@ -1,31 +1,35 @@
-source()
 #load model outpout
 #load("/Users/bbarrett/Downloads/fit_rank_freq_60s_slu_all.rds")
-load("~/Documents/bias_i_sa_60/ind.rds")
+load("~/Dropbox/bias_i_sa_60/ind.rds")
 fit_i <- stanfit
 post_ind <- extract(fit_i)
 
-load("~/Documents/bias_i_sa_60/freq.rds")
+load("~/Dropbox/bias_i_sa_60/freq.rds")
 fit_freq <- stanfit
 post_freq <- extract(fit_freq)
 
-load("~/Documents/bias_i_sa_60/male_cue.rds")
+load("~/Dropbox/bias_i_sa_60/male_cue.rds")
 fit_male <- stanfit
 post_male <- extract(fit_male)
+dens(post_freq$log_f)
+dens(post_freq$logit_gamma)
+dens(post_freq$logit_phi)
+dens(post_freq$log_lambda)
+dens(post_freq$log_lambda)
 
-load("~/Documents/bias_i_sa_60/adult_cue.rds")
+load("~/Dropbox/bias_i_sa_60/adult_cue.rds")
 fit_adult <- stanfit
 post_adult <- extract(fit_adult)
 
-load("~/Documents/bias_i_sa_60/roost_cue.rds")
+load("~/Dropbox/bias_i_sa_60/roost_cue.rds")
 fit_roost<- stanfit
 post_roost <- extract(fit_roost)
 
-load("~/Documents/bias_i_sa_60/male_lin.rds")
+load("~/Dropbox/bias_i_sa_60/male_lin.rds")
 fit_male_lin <- stanfit
 post_male_lin <- extract(fit_male_lin)
 
-load("~/Documents/bias_i_sa_60/adult_lin.rds")
+load("~/Dropbox/bias_i_sa_60/adult_lin.rds")
 fit_adult_lin <- stanfit
 post_adult_lin <- extract(fit_adult_lin)
 
@@ -36,12 +40,16 @@ post_adult_lin <- extract(fit_adult_lin)
 
 DensLambda(post_ind)
 DensLambda(post_ind , individual=TRUE , age_sex = FALSE)
+DensLambda(post_ind , group=TRUE , age_sex = FALSE)
+
 z <- precis(fit_i , pars="log_lambda" , depth=3)
 z@row.names <- PlotRenameAgeSex(z@row.names)
 plot(z)
 
 DensPhi(post_ind)
 DensPhi(post_ind , individual=TRUE , age_sex = FALSE)
+DensPhi(post_ind , group=TRUE , age_sex = FALSE , prior=FALSE)
+
 z <- precis(fit_i , pars="logit_phi" , depth=3)
 z@row.names <- PlotRenameAgeSex(z@row.names)
 plot(z)
@@ -109,12 +117,31 @@ DensFc(post_freq , prior=FALSE , individual=TRUE , age_sex=FALSE)
 DensSigma(post_freq$sigma_i , main="Sigma Individual")
 DensSigma(post_freq$sigma_g)
 
+
+#caalculate % of posterior greater than 1 or 0 on log scale
+str(post_freq)
+dem <- length(post_freq$log_f[,1,1])
+
+length(which(post_freq$log_f[,1,1] > 0)) / dem
+length(which(post_freq$log_f[,2,1] > 0)) / dem
+length(which(post_freq$log_f[,3,1] > 0)) / dem
+
+length(which(post_freq$log_f[,1,2] > 0)) / dem
+length(which(post_freq$log_f[,2,2] > 0)) / dem
+length(which(post_freq$log_f[,3,2] > 0)) / dem
+
+length(which(post_freq$log_f[,1,3] > 0)) / dem
+length(which(post_freq$log_f[,2,3] > 0)) / dem
+length(which(post_freq$log_f[,3,3] > 0)) / dem
+
 ################# male
 #load("/Users/bbarrett/Downloads/male_cue.rds")
 
 
 DensLambda(post_male)
 DensLambda(post_male , prior=FALSE , individual=TRUE , age_sex=FALSE)
+DensLambda(post_male , prior=FALSE , group=TRUE , age_sex=FALSE)
+
 #DensLambda(post_freq , group=TRUE , prior=FALSE , age_sex=FALSE)
 
 DensPhi(post_male)

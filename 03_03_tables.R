@@ -33,7 +33,6 @@ prec_roost <- prec_roost[,c("row_names","mean" , "sd" , "5.5%" , "94.5%")]
 prec_roost$row_names <- str_replace_all(prec_roost$row_names , "4", "666") #replace with placeholder for parameter table
 ##lets merge
 precis_list <- list(prec_i[,1:2],prec_freq[,1:2],prec_male_lin[,1:2],prec_adult_lin[,1:2],prec_roost[,1:2])
-
 param_mean_table <- Reduce(function(x,y) merge(x,y,all=TRUE,by="row_names"), precis_list)
 
 colnames(param_mean_table) <- c("Parameter", "Ind. Learn" ,"Freq. Dep" , "Male-bias" ,"Adult-bias","Roost-Bias")
@@ -73,3 +72,45 @@ str(param_mean_table_link)
 caption_text <- "Posterior mean estimates for all learning parameters and standard deviation of varying effects for five learning models. In the brackets, the first entry indicates age class (j=juveniles, a=adult, u=unknown). The second entry indicates sex class (f=female, m=male, u=unknown). Values of sigma correspond to the link scale."  
 print(xtable(param_mean_table_link, type = "latex"), include.rownames=FALSE, file = "tables/all_groups_param_means_real_scale_60s.tex" , size="scriptsize" ) # save to tex
 
+## just to get SD and CI for supp
+
+precis_list <- list(prec_i[,1:5],prec_freq[,1:5],prec_male_lin[,1:5],prec_adult_lin[,1:5],prec_roost[,1:5])
+param_mean_table <- Reduce(function(x,y) merge(x,y,all=TRUE,by="row_names"), precis_list)
+
+colnames(param_mean_table) <- c("Parameter", "Ind. Learn" ,"Freq. Dep" , "Male-bias" ,"Adult-bias","Roost-Bias")
+col_mods <-param_mean_table$Parameter
+#lets tidy up names
+col_mods[1:45] <- stri_replace_all_fixed(col_mods[1:45] , "[1,", "[a,")
+col_mods[1:45] <- stri_replace_all_fixed(col_mods[1:45] , "[2,", "[j,")
+col_mods[1:45] <- stri_replace_all_fixed(col_mods[1:45] , "[3,", "[u,")
+col_mods[1:45] <- stri_replace_all_fixed(col_mods[1:45] , ",1]", ",f]")
+col_mods[1:45] <- stri_replace_all_fixed(col_mods[1:45] , ",2]", ",m]")
+col_mods[1:45] <- stri_replace_all_fixed(col_mods[1:45] , ",3]", ",u]")
+
+col_mods[69:73] <- c("sigma(log_lambda)" , "sigma(logit_phi)" , "sigma(logit_gamma)" , "sigma(log_f)" , "sigma(beta)") #note the beta badness here
+
+param_mean_table$Parameter <- col_mods
+param_mean_table <- param_mean_table[-which(str_detect(param_mean_table$Parameter , "Rho")),] #drop rho
+v1 <- param_mean_table[which(str_detect(param_mean_table$Parameter , "lambda\\[")),]
+v2 <- param_mean_table[which(str_detect(param_mean_table$Parameter , "phi\\[")),]
+v3 <- param_mean_table[which(str_detect(param_mean_table$Parameter , "gamma\\[")),]
+v4 <- param_mean_table[which(str_detect(param_mean_table$Parameter , "log_f\\[")),]
+v5 <- param_mean_table[which(str_detect(param_mean_table$Parameter , "betaq\\[")),]
+v6 <- param_mean_table[which(str_detect(param_mean_table$Parameter , "sigma")),]
+param_mean_table_link <- rbind(v1,v2,v3,v4,v5,v6)
+param_mean_table2 <- rbind(v1,v2,v3,v4,v5,v6)
+
+#table on real scale
+param_mean_table_link[ which(str_detect(param_mean_table_link$Parameter , "lambda\\[")) , 2:21] <- exp(param_mean_table_link[ which(str_detect(param_mean_table_link$Parameter , "lambda\\[")) , 2:6] )
+param_mean_table_link[ which(str_detect(param_mean_table_link$Parameter , "phi\\[")) , 2:21] <- logistic(as.matrix(param_mean_table_link[ which(str_detect(param_mean_table_link$Parameter , "phi\\[")) , 2:6] ))
+param_mean_table_link[ which(str_detect(param_mean_table_link$Parameter , "gamma\\[")) , 2:21] <- logistic(as.matrix(param_mean_table_link[ which(str_detect(param_mean_table_link$Parameter , "gamma\\[")) , 2:6] ))
+param_mean_table_link[ which(str_detect(param_mean_table_link$Parameter , "log_f\\[")) , 2:21] <- exp(param_mean_table_link[ which(str_detect(param_mean_table_link$Parameter , "log_f\\[")) , 2:6] )
+
+param_mean_table_link$Parameter[1:45] <- str_replace_all(param_mean_table_link$Parameter[1:45] , "log_", "")
+param_mean_table_link$Parameter[1:45] <- str_replace_all(param_mean_table_link$Parameter[1:45] , "logit_", "")
+param_mean_table_link$Parameter[1:45] <- str_replace_all(param_mean_table_link$Parameter[1:45] , "betaq", "beta")
+
+str(param_mean_table_link)
+xxxx <-  c(rep("Ind. Learn" , 4) , rep("Freq. Dep" , 4) , rep("Male-bias" , 4)  , rep("Adult-bias",4) , rep("Roost-bias",4))
+colnames(param_mean_table_link) <- paste( xxxx , rep(colnames(prec_i)[2:5] , 4) )
+write.csv(param_mean_table_link , "all_model_params_sd_ci.csv")

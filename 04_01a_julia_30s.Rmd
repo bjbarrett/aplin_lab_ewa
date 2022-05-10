@@ -1,5 +1,5 @@
 ---
-title: "03_04_results_julia_60s_gaa"
+title: "03_04_results_julia_30s"
 author: "Brendan Barrett"
 date: "4/5/2022"
 output: html_document
@@ -15,11 +15,14 @@ source("02_01_plot_fcns.R")
 
 
 ```
+
+This got the N 0,3 priorz.
+
 ## Individual Learning
 Lets look at individual learning, not much to write home about here. 
 We cannot estimate a ton of variation in \phi as they are almost always successful.
 ```{r il}
-load("~/Dropbox/bias_i_sa_60_widerprior/ind.rds")
+load("~/Dropbox/bias_i_sa_30/ind.rds")
 fit_i <- stanfit
 post_ind <- extract(fit_i)
 
@@ -48,7 +51,7 @@ plot(precis(fit_i , pars="Rho_i" , depth=3))
 
 ## Frequency Dependent Social Learning
 ```{r fdsll}
-load("~/Dropbox/bias_i_sa_60_widerprior/freq.rds")
+load("~/Dropbox/bias_i_sa_30/freq.rds")
 fit_freq <- stanfit
 post_freq <- extract(fit_freq)
 
@@ -116,7 +119,7 @@ length(which(post_freq$log_f[,3,3] > 0)) / dem #uu
 ## Male Biased Linear Social Learning
 
 ```{r mblsl}
-load("~/Dropbox/bias_i_sa_60_widerprior/male_lin.rds")
+load("~/Dropbox/bias_i_sa_30/male_lin.rds")
 fit_male_lin <- stanfit
 post_male_lin <- extract(fit_male_lin)
 
@@ -158,7 +161,7 @@ plot(precis(fit_male_lin  , pars="Rho_i" , depth=3))
 ## Adult-biased Linear social learning
 
 ```{r ablsl}
-load("~/Dropbox/bias_i_sa_60_widerprior/adult_lin.rds")
+load("~/Dropbox/bias_i_sa_30/adult_lin.rds")
 fit_adult_lin <- stanfit
 post_adult_lin <- extract(fit_adult_lin)
 
@@ -199,7 +202,7 @@ plot(precis(fit_adult_lin  , pars="Rho_i" , depth=3))
 
 ## Roost-biased social learning
 ```{r roostb sl}
-load("~/Dropbox/bias_i_sa_60_widerprior/roost_cue.rds")
+load("~/Dropbox/bias_i_sa_30/roost_cue.rds")
 fit_roost<- stanfit
 post_roost <- extract(fit_roost)
 
@@ -250,7 +253,7 @@ plot(precis(fit_roost , pars="Rho_i" , depth=3))
 
 ## Male-biased social learning
 ```{r  male b sl}
-load("~/Dropbox/bias_i_sa_60_widerprior/male_cue.rds")
+load("~/Dropbox/bias_i_sa_30/male_cue.rds")
 fit_male <- stanfit
 post_male <- extract(fit_male)
 
@@ -301,7 +304,7 @@ plot(precis(fit_male , pars="Rho_i" , depth=3))
 #Adult-biased social learning
 
 ```{r  adult b sl}
-load("~/Dropbox/bias_i_sa_60_widerprior/adult_cue.rds")
+load("~/Dropbox/bias_i_sa_30/adult_cue.rds")
 fit_adult <- stanfit
 post_adult <- extract(fit_adult)
 

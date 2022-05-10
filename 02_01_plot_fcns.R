@@ -33,7 +33,6 @@ DensLambda <- function(x , prior=TRUE , individual=FALSE , group=FALSE , age_sex
   for(i in 1:dim(x$G)[2]){
     dens(exp(x$G[,i,1] + x$log_lambda ), add=TRUE , col=colz3[i] , adj=0.8)
     shade( density(exp(x$G[,i,1] + x$log_lambda )) , PCI(exp(x$G[,i,1] + x$log_lambda ) , prob=0.9999) , col=col.alpha(colz3[i], 0.4) )
-    
   }
   legend("topright", c("BA","BG","CG","MA","NB") ,fill=colz3 , bty='n')
   #legend("topright" , c("AF","JF","AM","JM"),fill=c("salmon4","salmon2","royalblue4","royalblue2" ) , bty='n')
@@ -66,6 +65,14 @@ if(age_sex==TRUE){
     for(i in 1:dim(x$phi_i)[2]){
       dens(x$phi_i[,i] , add=TRUE , col=col.alpha("black", 0.05) , adj=0.8)
     }
+  }
+  if(group==TRUE){
+    colz3 <- brewer.pal(dim(x$G)[2] , "Dark2")
+    for(i in 1:dim(x$G)[2]){
+      dens(logistic(x$G[,i,2] + x$logit_phi ), add=TRUE , col=colz3[i] , adj=0.8)
+      shade( density(logistic(x$G[,i,2] + x$logit_phi )) , PCI(exp(x$G[,i,2] + x$logit_phi) , prob=0.9999) , col=col.alpha(colz3[i], 0.4) )
+    }
+    legend("topright", c("BA","BG","CG","MA","NB") ,fill=colz3 , bty='n')
   }
 }
 
@@ -122,7 +129,7 @@ DensFc <- function(x, prior=TRUE , individual=FALSE , group=FALSE , age_sex=TRUE
     if(unknown==FALSE) legend("topright" , c("AF","JF","AM","JM"),fill=c(brewer.pal(6,"Reds")[c(2,4)], brewer.pal(6,"Blues")[c(2,4)]) , bty='n')    
   }
   if(prior==TRUE){
-    dens( exp(rnorm(4000, mean = 0, sd = 1)) , add=TRUE , lty=2 , col="black",adj=.9) #prior
+    dens( exp(rnorm(4000, mean = 0, sd = 0.7)) , add=TRUE , lty=2 , col="black",adj=.9) #prior
   }
   if(individual==TRUE){
     for(i in 1:dim(x$fc_i)[2]){
