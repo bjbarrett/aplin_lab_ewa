@@ -52,7 +52,7 @@ model {
     to_vector(logit_gamma) ~  normal(0,1);
     to_vector(log_f) ~  normal(0,0.8);
     sigma_i ~ exponential(1);
-    to_vector(zed_i) ~ normal(0,1);
+    to_vector(zed_i) ~ normal(0,0.5);
     L_Rho_i ~ lkj_corr_cholesky(3);
     // sigma_g ~ exponential(1);
     // to_vector(zed_g) ~ normal(0,0.5);

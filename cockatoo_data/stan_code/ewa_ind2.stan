@@ -46,7 +46,7 @@ model {
     to_vector(log_lambda) ~  normal(1,0.6);
     to_vector(logit_phi) ~  normal(0,1);
     sigma_i ~ exponential(1);
-    to_vector(zed_i) ~ normal(0,0.8);
+    to_vector(zed_i) ~ normal(0,1);
     L_Rho_i ~ lkj_corr_cholesky(3);
     // sigma_g ~ exponential(1);
     // to_vector(zed_g) ~ normal(0,1);

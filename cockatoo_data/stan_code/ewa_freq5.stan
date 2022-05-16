@@ -12,7 +12,7 @@ data {
     int age_index[N];   // age index
     int sex_index[N];   // sex index
     int group_index[N];   // group index
-    real ac_init[N,K];     // initil attraction scores
+    real ac_init[N,K];     // initial attraction scores
 }
 
 parameters {
@@ -23,10 +23,12 @@ parameters {
   matrix[N_effects,L] zed_g;                // individual z-scores for cholesky decomp
   cholesky_factor_corr[N_effects] L_Rho_g;  // correlation matrix
   //simplex[K] psi;                           // simplex for bias
-  matrix[3,3] log_lambda;                    
-  matrix[3,3] logit_phi;                    
-  matrix[3,3] logit_gamma;                    
-  matrix[3,3] log_f;                    
+  matrix[3,3] ASl;                    
+  matrix[3,3] ASp;                    
+  matrix[3,3] ASg;                    
+  matrix[3,3] ASf;    
+  vector[N_effects] mu;                // individual z-scores for cholesky decomp
+
 }
 
 transformed parameters{
@@ -47,15 +49,19 @@ model {
     real fc;            // conform exponent
 
    //priors
-    to_vector(log_lambda) ~  normal(1,0.6);
-    to_vector(logit_phi) ~  normal(0,1);
-    to_vector(logit_gamma) ~  normal(0,1);
-    to_vector(log_f) ~  normal(0,0.8);
+    mu[1] ~  normal(1,0.6);
+    mu[2] ~  normal(0,1);
+    mu[3] ~  normal(0,1);
+    mu[4] ~  normal(0,1);
+    to_vector(ASl) ~  normal(mu[1],0.5);
+    to_vector(ASp) ~  normal(mu[2],0.5);
+    to_vector(ASg) ~  normal(mu[3],0.5);
+    to_vector(ASf) ~  normal(mu[4],0.5);
     sigma_i ~ exponential(1);
-    to_vector(zed_i) ~ normal(0,0.5);
+    to_vector(zed_i) ~ normal(0,0.8);
     L_Rho_i ~ lkj_corr_cholesky(4);
     sigma_g ~ exponential(1);
-    to_vector(zed_g) ~ normal(0,0.5);
+    to_vector(zed_g) ~ normal(0,0.8);
     L_Rho_g ~ lkj_corr_cholesky(4);
     //psi ~ dirichlet(rep_vector(3,K));
     
@@ -71,15 +77,11 @@ model {
         }//j
 
         if ( bout[i]==1 ) {
-            // calculate new individual's parameter values
-            // lambda = exp( I[id[i],1]  + log_lambda[age_index[i],sex_index[i]] );
-            // phi= inv_logit( I[id[i],2] + logit_phi[age_index[i],sex_index[i]] );
-            // gamma = inv_logit(I[id[i],3]  + logit_gamma[age_index[i],sex_index[i]] );
-            // fc = exp(I[id[i],4] + log_f[age_index[i],sex_index[i]]);
-            lambda = exp( I[id[i],1] + G[group_index[i],1] + log_lambda[age_index[i],sex_index[i]] );
-            phi= inv_logit( I[id[i],2] + G[group_index[i],2] + logit_phi[age_index[i],sex_index[i]] );
-            gamma = inv_logit(I[id[i],3] + G[group_index[i],3] + logit_gamma[age_index[i],sex_index[i]] );
-            fc = exp(I[id[i],4] + G[group_index[i],4] + log_f[age_index[i],sex_index[i]]);
+            // calculate new individual's parameter values;
+            lambda = exp( I[id[i],1] + G[group_index[i],1] + ASl[age_index[i],sex_index[i]] );
+            phi= inv_logit( I[id[i],2] + G[group_index[i],2] + ASp[age_index[i],sex_index[i]] );
+            gamma = inv_logit(I[id[i],3] + G[group_index[i],3] + ASg[age_index[i],sex_index[i]] );
+            fc = exp(I[id[i],4] + G[group_index[i],4] + ASf[age_index[i],sex_index[i]]);
         }
 
         logPrA = lambda*AC[tech[i]] - log_sum_exp( lambda*AC );
@@ -103,10 +105,19 @@ generated quantities{
     real logPrA;        // individual learning temp
     real PrS;        // social learning temp
     vector[K] s_temp;        
+    // real lambda;           // stickiness parameter
+    // real phi;           // stickiness parameter
+    // real gamma;         // social weight
+    // real fc;     // conform exponent
     real lambda_i[J];           // stickiness parameter
     real phi_i[J];           // stickiness parameter
     real gamma_i[J];         // social weight
     real fc_i[J];     // conform exponent
+    // vector[L] lambda_g;           // stickiness parameter
+    // vector[L] phi_g;           // stickiness parameter
+    // vector[L] gamma_g;           // stickiness parameter
+    // vector[L] fc_g;           // stickiness parameter
+    // vector[N_effects] mu;           // stickiness parameter
     matrix[N_effects,N_effects] Rho_i;
     matrix[N_effects,N_effects] Rho_g;
     matrix[N,K] PrPreds;     
@@ -125,17 +136,14 @@ generated quantities{
         }//j
 
         if ( bout[i]==1 ) {
-            // lambda_i[id[i]] = exp( I[id[i],1]  + log_lambda[age_index[i],sex_index[i]] );
-            // phi_i[id[i]] = inv_logit( I[id[i],2] + logit_phi[age_index[i],sex_index[i]] );
-            // gamma_i[id[i]] = inv_logit(I[id[i],3]  + logit_gamma[age_index[i],sex_index[i]] );
-            // fc_i[id[i]] = exp(I[id[i],4] + log_f[age_index[i],sex_index[i]]);
-            lambda_i[id[i]] = exp( I[id[i],1] + G[group_index[i],1] + log_lambda[age_index[i],sex_index[i]] );
-            phi_i[id[i]] = inv_logit( I[id[i],2] + G[group_index[i],2] + logit_phi[age_index[i],sex_index[i]] );
-            gamma_i[id[i]] = inv_logit(I[id[i],3] + G[group_index[i],3] + logit_gamma[age_index[i],sex_index[i]] );
-            fc_i[id[i]] = exp(I[id[i],4] + G[group_index[i],4] + log_f[age_index[i],sex_index[i]]);
+
+            lambda_i[id[i]] = exp( I[id[i],1] + G[group_index[i],1] + ASl[age_index[i],sex_index[i]] );
+            phi_i[id[i]] = inv_logit( I[id[i],2] + G[group_index[i],2] + ASp[age_index[i],sex_index[i]] );
+            gamma_i[id[i]] = inv_logit(I[id[i],3] + G[group_index[i],3] + ASg[age_index[i],sex_index[i]] );
+            fc_i[id[i]] = exp(I[id[i],4] + G[group_index[i],4] + ASf[age_index[i],sex_index[i]]);
         }
 
-        logPrA = lambda_i[id[i]]*AC[tech[i]] - log_sum_exp( lambda_i[id[i]]*AC );
+        logPrA =  lambda_i[id[i]]*AC[tech[i]] - log_sum_exp(  lambda_i[id[i]]*AC );
 
         //conformity aspect below
             if (sum( s[i] ) > 0 ) { //only socially learn when there is social information
@@ -153,4 +161,18 @@ generated quantities{
                  }
             }
      }//i  
+    // for (j in 1:J){
+    //     lambda_i[j] =exp(mu[1] + I[j,1]);
+    //     phi_i[j] = inv_logit(mu[2] + I[j,2]);
+    //     gamma_i[j] =inv_logit(mu[3] + I[j,3]);
+    //     fc_i[j] = exp(mu[4] + I[j,4]); 
+    //   }
+
+/*    for (l in 1:L){
+        lambda_g[l] =exp(mu[1] + G[l,1]);
+        phi_g[l] = inv_logit(mu[2] + G[l,2]);
+        gamma_g[l] =inv_logit(mu[3] + G[l,3]);
+        fc_g[l] = exp(mu[4] + G[l,4]); 
+    }*/
+    
 }//end of model

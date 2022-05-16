@@ -100,6 +100,7 @@ datalist_s_male <- list(
 
 
 
+
 #scale cues by dividing by max value
 datalist_s_male$q <- datalist_s_male$q / max(datalist_s_male$q)
 
@@ -145,87 +146,41 @@ datalist_s_roost$q <- datalist_s_roost$q / max(datalist_s_roost$q)
 
 
 ########CMDSTANR model fits#########
-file <- file.path("cockatoo_data/stan_code/ewa_ind2.stan")
+file <- file.path("cockatoo_data/stan_code/ewa_ind5.stan")
 mod <- cmdstan_model(file , cpp_options = list(stan_threads = TRUE) )
 fit_i <- mod$sample(
   data = datalist_i,
-  seed = 123,
+  seed = 23,
   chains = 4,
   parallel_chains = 4,
   refresh = 100,
   iter_sampling = 1000,
   iter_warmup = 1000,
   threads=8,
-  adapt_delta = 0.9,
+  adapt_delta = 0.95,
 )
 
-
 stanfit <- rstan::read_stan_csv(fit_i$output_files())
-#post_i <- extract(stanfit)
-save(stanfit , file="ind.rds")
-# 
-# file <- file.path("cockatoo_data/stan_code/ewa_ind_hw_pref.stan")
-# mod <- cmdstan_model(file , cpp_options = list(stan_threads = TRUE) )
-# fit_i_blue <- mod$sample(
-#   data = datalist_i_bluepref,
-#   seed = 123,
-#   chains = 4,
-#   parallel_chains = 4,
-#   refresh = 100,
-#   iter_sampling = 1000,
-#   iter_warmup = 1000,
-#   threads=8,
-#   adapt_delta = 0.9,
-# )
-# 
-# file <- file.path("cockatoo_data/stan_code/ewa_ind_hw_pref.stan")
-# mod <- cmdstan_model(file , cpp_options = list(stan_threads = TRUE) )
-# fit_i_red <- mod$sample(
-#   data = datalist_i_redpref,
-#   seed = 123,
-#   chains = 4,
-#   parallel_chains = 4,
-#   refresh = 100,
-#   iter_sampling = 1000,
-#   iter_warmup = 1000,
-#   threads=8,
-#   adapt_delta = 0.9,
-# )
-# 
-# fit_i_red$summary( "log_lambda" )
-# fit_i_red$summary( "logit_phi" )
-# fit_i_blue$summary( "log_lambda" )
-# fit_i_blue$summary( "logit_phi" )
-
-# fit_i$summary( "lambda_i" )
-# fit_i$summary( "phi_i" )
-# fit_i$summary( "G" )
-# fit_i$summary( "I" )
-# fit_i$summary( "psi" )
-
-stanfit <- rstan::read_stan_csv(fit_i$output_files())
-#post_i <- extract(stanfit)
 save(stanfit , file="ind.rds")
 
-######
-file <- file.path("cockatoo_data/stan_code/ewa_freq2.stan")
+######freq
+file <- file.path("cockatoo_data/stan_code/ewa_freq5.stan")
 mod <- cmdstan_model(file , cpp_options = list(stan_threads = TRUE) )
 fit_freq <- mod$sample(
   data = datalist_s,
-  seed = 153,
-  adapt_delta = 0.99,
+  seed = 13,
+  adapt_delta = 0.995,
   init = 0.01,
   chains = 4,
   parallel_chains = 4, 
-  refresh = 10,
+  refresh = 100,
   iter_sampling = 1000,
   iter_warmup = 1000,
   threads=8,
-  max_treedepth = 14
+  max_treedepth = 12
   )
 
 # #draws_f <- fit_freq$draws()
-# #mcmc_dens(fit_freq$draws(c("G")))
 # # fit_freq$summary( "log_lambda" )
 # # fit_freq$summary( "logit_phi" )
 # # fit_freq$summary( "logit_gamma" )
@@ -242,8 +197,9 @@ stanfit <- rstan::read_stan_csv(fit_freq$output_files())
 #post_freq <- extract(stanfit)
 save(stanfit , file="freq.rds")
 
+
 ###male_bias
-file <- file.path("cockatoo_data/stan_code/ewa_cue2.stan")
+file <- file.path("cockatoo_data/stan_code/ewa_cue5.stan")
 mod <- cmdstan_model(file , cpp_options = list(stan_threads = TRUE) )
 fit_male <- mod$sample(
   data = datalist_s_male,
@@ -326,7 +282,7 @@ plot(precis(stanfit, pars="betaq_i" , depth=3))
 plot(precis(stanfit, pars="I" , depth=3))
 #male proportional copying
 
-file <- file.path("cockatoo_data/stan_code/ewa_linear.stan")
+file <- file.path("cockatoo_data/stan_code/ewa_linear5.stan")
 mod <- cmdstan_model(file , cpp_options = list(stan_threads = TRUE) )
 fit_male_lin <- mod$sample(
   data = datalist_s_male,
@@ -341,47 +297,28 @@ fit_male_lin <- mod$sample(
   threads=8,
   max_treedepth = 12
 )
+  
 
-stanfit <- rstan::read_stan_csv(fit_male_lin$output_files())
-save(stanfit , file="male_lin.rds")
 
-#adult proporional copying
-file <- file.path("cockatoo_data/stan_code/ewa_linear.stan")
-mod <- cmdstan_model(file , cpp_options = list(stan_threads = TRUE) )
-fit_adult_lin <- mod$sample(
-  data = datalist_s_adult,
-  seed = 113,
-  adapt_delta = 0.95,
-  init = 0.1,
-  chains = 4,
-  parallel_chains = 4,
-  refresh = 100,
-  iter_sampling = 1000,
-  iter_warmup = 1000,
-  threads=8,
-  max_treedepth = 12
-)
+#######
+post <- extract(stanfit)
+dens(exp(post$mu[,4]))
+dens(exp(post$mu[,4]) + post$ASf[,1,1] , add=TRUE)
 
-stanfit <- rstan::read_stan_csv(fit_adult_lin$output_files())
-save(stanfit , file="adult_lin.rds")
-# 
+dens(exp(post$mu[,4]) + post$G[,1,4] , add=TRUE)
+dens(exp(post$mu[,4]) + post$G[,2,4] , add=TRUE)
+dens(exp(post$mu[,4]) + post$G[,3,4] , add=TRUE)
+dens(exp(post$mu[,4]) + post$G[,4,4] , add=TRUE)
+dens(exp(post$mu[,4]) + post$G[,5,4] , add=TRUE)
 
-#roost
-file <- file.path("cockatoo_data/stan_code/ewa_linear.stan")
-mod <- cmdstan_model(file , cpp_options = list(stan_threads = TRUE) )
-fit_roost_lin <- mod$sample(
-  data = datalist_s_roost,
-  seed = 113,
-  adapt_delta = 0.95,
-  init = 0.1,
-  chains = 4,
-  parallel_chains = 4,
-  refresh = 100,
-  iter_sampling = 1000,
-  iter_warmup = 1000,
-  threads=8,
-  max_treedepth = 12
-)
+dens(exp(post$mu[,1]) + post$G[,1,1])
+dens(exp(post$mu[,1]) + post$G[,2,1] , add=TRUE)
+dens(exp(post$mu[,1]) + post$G[,3,1] , add=TRUE)
+dens(exp(post$mu[,1]) + post$G[,4,1] , add=TRUE)
+dens(exp(post$mu[,1]) + post$G[,5,1] , add=TRUE)
 
-stanfit <- rstan::read_stan_csv(fit_roost_lin$output_files())
-save(stanfit , file="roost_lin.rds")
+precis(stanfit , pars='G' , depth=3)
+precis(stanfit , pars='I' , depth=3)
+precis(stanfit , pars='sigma_i' , depth=3)
+precis(stanfit , pars='sigma_g' , depth=3)
+
