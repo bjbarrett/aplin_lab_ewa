@@ -105,19 +105,10 @@ generated quantities{
     real logPrA;        // individual learning temp
     real PrS;        // social learning temp
     vector[K] s_temp;        
-    // real lambda;           // stickiness parameter
-    // real phi;           // stickiness parameter
-    // real gamma;         // social weight
-    // real fc;     // conform exponent
     real lambda_i[J];           // stickiness parameter
     real phi_i[J];           // stickiness parameter
     real gamma_i[J];         // social weight
     real fc_i[J];     // conform exponent
-    // vector[L] lambda_g;           // stickiness parameter
-    // vector[L] phi_g;           // stickiness parameter
-    // vector[L] gamma_g;           // stickiness parameter
-    // vector[L] fc_g;           // stickiness parameter
-    // vector[N_effects] mu;           // stickiness parameter
     matrix[N_effects,N_effects] Rho_i;
     matrix[N_effects,N_effects] Rho_g;
     matrix[N,K] PrPreds;     

@@ -5,7 +5,7 @@ options(mc.cores=32)
 
 #assuming previous cleaning code is run, which we need to add to github
 #d <- read.csv("cockatoo_data/BA_Almonds_cockatoo_60s.csv")
-d <- read.csv("ALL_ROOSTS_Almonds_cockatoo_30s.csv")
+d <- read.csv("ALL_ROOSTS_Almonds_cockatoo_60s.csv")
 
 
 ### individual learning models
@@ -298,27 +298,3 @@ fit_male_lin <- mod$sample(
   max_treedepth = 12
 )
   
-
-
-#######
-post <- extract(stanfit)
-dens(exp(post$mu[,4]))
-dens(exp(post$mu[,4]) + post$ASf[,1,1] , add=TRUE)
-
-dens(exp(post$mu[,4]) + post$G[,1,4] , add=TRUE)
-dens(exp(post$mu[,4]) + post$G[,2,4] , add=TRUE)
-dens(exp(post$mu[,4]) + post$G[,3,4] , add=TRUE)
-dens(exp(post$mu[,4]) + post$G[,4,4] , add=TRUE)
-dens(exp(post$mu[,4]) + post$G[,5,4] , add=TRUE)
-
-dens(exp(post$mu[,1]) + post$G[,1,1])
-dens(exp(post$mu[,1]) + post$G[,2,1] , add=TRUE)
-dens(exp(post$mu[,1]) + post$G[,3,1] , add=TRUE)
-dens(exp(post$mu[,1]) + post$G[,4,1] , add=TRUE)
-dens(exp(post$mu[,1]) + post$G[,5,1] , add=TRUE)
-
-precis(stanfit , pars='G' , depth=3)
-precis(stanfit , pars='I' , depth=3)
-precis(stanfit , pars='sigma_i' , depth=3)
-precis(stanfit , pars='sigma_g' , depth=3)
-
