@@ -12,17 +12,17 @@ d <- read.csv("ALL_ROOSTS_Almonds_cockatoo_60s.csv")
 datalist_i <- list(
   N = nrow(d),                                  #length of dataset
   J = length( unique(d$subject_index) ),       #number of individuals
-  L = length( unique(d$group_index) ),       #number of individuals
+  L = length( unique(d$group_index) ),       #number of groups
   K = 2,                   #number of processing techniques
   tech = d$tech_index,                     #technique index
   pay_i = cbind( d$choose_blue*d$open , d$choose_red*d$open ),  #individual payoff at timestep (1 if succeed, 0 is fail)
   bout = d$bout,                          #processing bout unique to individual J
   id = d$subject_index ,                      #individual ID
-  N_effects=2 ,                               #number of parameters to estimates
-  sex_index=d$sex_index,
-  age_index=d$age_index,
-  group_index=d$group_index,
-  ac_init = cbind( d$ac_b_init , d$ac_r_init )
+  N_effects=2 ,                               #number of parameters to estimate
+  sex_index=d$sex_index,                     #1=female, 2=male
+  age_index=d$age_index,                      #1=adult, 2=juvenile
+  group_index=d$group_index,                  # index var for group
+  ac_init = cbind( d$ac_b_init , d$ac_r_init ) #initial attraction scores
 )
 # 
 # datalist_i_bluepref <- list(
@@ -281,7 +281,7 @@ plot(precis(stanfit, pars="betaq" , depth=3))
 plot(precis(stanfit, pars="betaq_i" , depth=3))
 plot(precis(stanfit, pars="I" , depth=3))
 #male proportional copying
-
+# i changed s ro q
 file <- file.path("cockatoo_data/stan_code/ewa_linear5.stan")
 mod <- cmdstan_model(file , cpp_options = list(stan_threads = TRUE) )
 fit_male_lin <- mod$sample(
@@ -297,4 +297,19 @@ fit_male_lin <- mod$sample(
   threads=8,
   max_treedepth = 12
 )
-  
+
+file <- file.path("cockatoo_data/stan_code/ewa_linear5.stan")
+mod <- cmdstan_model(file , cpp_options = list(stan_threads = TRUE) )
+fit_adult_lin <- mod$sample(
+  data = datalist_s_adult,
+  seed = 113,
+  adapt_delta = 0.95,
+  init = 0.1,
+  chains = 4,
+  parallel_chains = 4,
+  refresh = 100,
+  iter_sampling = 1000,
+  iter_warmup = 1000,
+  threads=8,
+  max_treedepth = 12
+)

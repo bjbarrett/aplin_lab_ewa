@@ -6,6 +6,7 @@ data {
     int tech[N];        // techique chosen
     real pay_i[N,K];    // observed personal yields of techs (1/0)
     real s[N,K];        // observed number of ttimes observing behaviors
+    real q[N,K];        // observed number of times observing behaviors in the biased model
     int bout[N];        // processing bout per individual
     int id[N];          // individual id
     int age_index[N];   // age index
@@ -85,7 +86,7 @@ model {
                 // compute frequency cue
                 //for ( j in 1:K ) s_temp[j] = pow(s[i,j],1);
                 //PrS = s_temp[tech[i]]/sum(s_temp);
-                PrS = s[i,tech[i]]/sum(s[i,]);
+                PrS = q[i,tech[i]]/sum(q[i,]);
                 target += log( (1-gamma)*exp(logPrA) + gamma*PrS ) ;
             } else {
                 target += logPrA;
@@ -134,7 +135,7 @@ generated quantities{
                 // compute frequency cue
                 //for ( j in 1:K ) s_temp[j] = pow(s[i,j],1);
                 //PrS = s_temp[tech[i]]/sum(s_temp);
-                PrS = s[i,tech[i]]/sum(s[i,]);
+                PrS = q[i,tech[i]]/sum(q[i,]);
                 log_lik[i] =  log( (1-gamma_i[id[i]])*exp(logPrA) + gamma_i[id[i]]*PrS )  ; 
                 for(j in 1:K){
                     PrPreds[i,j] = (1-gamma_i[id[i]])*exp( lambda_i[id[i]]*AC[j] - log_sum_exp( lambda_i[id[i]]*AC) ) + gamma_i[id[i]]*(s_temp[j]/sum(s_temp)) ;

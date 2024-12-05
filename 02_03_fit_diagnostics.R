@@ -10,7 +10,7 @@ post_freq <- extract(fit_freq)
 
 load("~/Dropbox/bias_i_sa_60/male_cue.rds")
 fit_male <- stanfit
-post_male <- extract(fit_male)
+post_male <- extract.samples(fit_male)
 dens(post_freq$log_f)
 dens(post_freq$logit_gamma)
 dens(post_freq$logit_phi)
